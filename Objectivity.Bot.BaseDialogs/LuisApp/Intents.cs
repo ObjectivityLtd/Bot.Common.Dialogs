@@ -1,4 +1,4 @@
-﻿namespace Bot.BaseDialogs.LuisApp
+﻿namespace Objectivity.Bot.BaseDialogs.LuisApp
 {
     public static class Intents
     {

@@ -1,4 +1,4 @@
-﻿namespace Bot.BaseDialogs.Services
+﻿namespace Objectivity.Bot.BaseDialogs.Services
 {
     using System;
     using System.Collections.Generic;

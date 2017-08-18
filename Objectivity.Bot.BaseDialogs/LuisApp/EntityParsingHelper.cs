@@ -1,4 +1,4 @@
-﻿namespace Bot.BaseDialogs.LuisApp
+﻿namespace Objectivity.Bot.BaseDialogs.LuisApp
 {
     using System;
     using System.Linq;

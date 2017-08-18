@@ -7,8 +7,8 @@
     <ProjectGuid>{15E751DB-AA8D-47B6-8255-769BC3509AF4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Bot.BaseDialogs</RootNamespace>
-    <AssemblyName>Bot.BaseDialogs</AssemblyName>
+    <RootNamespace>Objectivity.Bot.BaseDialogs</RootNamespace>
+    <AssemblyName>Objectivity.Bot.BaseDialogs</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

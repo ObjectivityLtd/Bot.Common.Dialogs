@@ -1,4 +1,4 @@
-﻿namespace Bot.BaseDialogs.AutofacModules
+﻿namespace Objectivity.Bot.BaseDialogs.AutofacModules
 {
     using System.Collections.Generic;
     using System.Configuration;
@@ -10,6 +10,7 @@
     using Microsoft.Bot.Builder.CognitiveServices.QnAMaker;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Internals.Fibers;
+    using QnA;
     using Utils;
 
     public class BaseDialogsModule : Module

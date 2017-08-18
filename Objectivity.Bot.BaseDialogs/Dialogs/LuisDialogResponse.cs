@@ -1,4 +1,4 @@
-﻿namespace Bot.BaseDialogs.Dialogs
+﻿namespace Objectivity.Bot.BaseDialogs.Dialogs
 {
     using Microsoft.Bot.Builder.Luis.Models;
 

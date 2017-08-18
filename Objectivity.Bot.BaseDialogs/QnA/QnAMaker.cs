@@ -1,4 +1,4 @@
-namespace Bot.BaseDialogs.Dialogs
+namespace Objectivity.Bot.BaseDialogs.QnA
 {
     using System;
     using System.Linq;

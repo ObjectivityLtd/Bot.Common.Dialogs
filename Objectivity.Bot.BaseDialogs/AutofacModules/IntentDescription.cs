@@ -1,4 +1,4 @@
-namespace Bot.BaseDialogs.AutofacModules
+namespace Objectivity.Bot.BaseDialogs.AutofacModules
 {
     using System;
 

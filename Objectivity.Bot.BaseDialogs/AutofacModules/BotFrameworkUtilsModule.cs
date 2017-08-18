@@ -1,8 +1,9 @@
-﻿namespace Bot.BaseDialogs.AutofacModules
+﻿namespace Objectivity.Bot.BaseDialogs.AutofacModules
 {
     using Autofac;
     using Microsoft.Bot.Builder.Autofac.Base;
     using Microsoft.Bot.Builder.Dialogs.Internals;
+    using Utils;
 
     public class BotFrameworkUtilsModule : Module
     {
