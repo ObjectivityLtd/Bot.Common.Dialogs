@@ -94,6 +94,7 @@
     <Compile Include="AutofacModules\IntentDescription.cs" />
     <Compile Include="AutofacModules\IntentDescriptionProvider.cs" />
     <Compile Include="Utils\ApplicationSettings.cs" />
+    <Compile Include="Utils\ContextHelper.cs" />
     <Compile Include="Utils\CustomPostUnhandledExceptionToUser.cs" />
     <Compile Include="Dialogs\DialogFactory.cs" />
     <Compile Include="QnA\IQnAMaker.cs" />
