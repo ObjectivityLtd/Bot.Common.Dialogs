@@ -20,6 +20,6 @@
         </dependencies>
     </metadata>
     <files>
-        <file src="bin\Release\Bot.BaseDialogs.dll" target="lib\Bot.BaseDialogs.dll" />
+        <file src="bin\Release\Objectivity.Bot.BaseDialogs.dll" target="lib\Objectivity.Bot.BaseDialogs.dll" />
     </files>
 </package>
