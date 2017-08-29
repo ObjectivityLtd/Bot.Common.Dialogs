@@ -19,5 +19,10 @@
                 .Select(kvp => new LuisService(new LuisModelAttribute(kvp.Key, kvp.Value) { Verbose = true, Log = true, SpellCheck = false, Staging = isStaging }))
                 .ToArray();
         }
+
+        public IEnumerable<ILuisService> GetDefaultLuisServices(string cultureCode = "en-us")
+        {
+            throw new NotImplementedException();
+        }
     }
 }

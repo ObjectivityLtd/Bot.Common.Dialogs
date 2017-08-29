@@ -35,5 +35,10 @@
 
             return Enumerable.Empty<ILuisService>();
         }
+
+        public IEnumerable<ILuisService> GetDefaultLuisServices(string cultureCode = "en-us")
+        {
+            throw new NotImplementedException();
+        }
     }
 }

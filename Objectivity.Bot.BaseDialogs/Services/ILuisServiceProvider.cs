@@ -7,5 +7,7 @@
     public interface ILuisServiceProvider
     {
         IEnumerable<ILuisService> GetLuisServicesForDialog(Type dialogType);
+ 
+        IEnumerable<ILuisService> GetDefaultLuisServices(string cultureCode = "en-us");
     }
 }
