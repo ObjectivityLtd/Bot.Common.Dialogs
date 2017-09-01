@@ -29,7 +29,7 @@
             }
             DateTime date;
             var isDateParsable = DateTime.TryParse(entityRecommendation.Entity, out date);
-            var dates = ((JArray)jarray).Select(token => DateParser.ParseDate(token["value"].ToString(), isDateParsable));
+            var dates = JArray.FromObject(jarray).Select(token => DateParser.ParseDate(token["value"].ToString(), isDateParsable));
             // Luis treats next year's months from today, and returns 2 dates in response, one from last year, second from next one.
             return DateTime.Today <= dates.FirstOrDefault() ? dates.FirstOrDefault() : dates.LastOrDefault();
         }
