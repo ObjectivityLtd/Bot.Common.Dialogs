@@ -28,7 +28,11 @@
 
         public override async Task StartAsync(IDialogContext context)
         {
-            await context.PostAsync(this.PromptMessage);
+            if (!string.IsNullOrEmpty(this.PromptMessage))
+            {
+                await context.PostAsync(this.PromptMessage);
+            }
+
             context.Wait(this.MessageReceived);
         }
 
