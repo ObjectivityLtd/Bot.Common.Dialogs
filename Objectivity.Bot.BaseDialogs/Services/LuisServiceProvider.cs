@@ -15,7 +15,7 @@
             this.luisModelProvider = luisModelProvider;
         }
 
-        public IEnumerable<ILuisService> GetLuisServicesForDialog(Type dialogType)
+        public IEnumerable<ILuisService> GetLuisServicesForDialog(Type dialogType, IDialogContext dialogContext)
         {
             if (dialogType == null)
             {

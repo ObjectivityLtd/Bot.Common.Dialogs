@@ -61,7 +61,7 @@
 
         private Task<LuisResult>[] GetLuisIntents(IDialogContext context, string messageText)
         {
-            return this.luisServiceProvider.GetLuisServicesForDialog(this.GetType()).Select(service =>
+            return this.luisServiceProvider.GetLuisServicesForDialog(this.GetType(), context).Select(service =>
             {
                 var request = service.ModifyRequest(new LuisRequest(messageText));
                 return service.QueryAsync(request, context.CancellationToken);

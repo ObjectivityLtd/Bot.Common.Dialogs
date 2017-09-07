@@ -22,7 +22,7 @@
         [LuisIntent(Intents.GetDate)]
         public async Task GetDate(IDialogContext context, LuisResult result)
         {
-            result = await this.ParseDatesAndResendIfNeeded(result);
+            result = await this.ParseDatesAndResendIfNeeded(result, context);
             await this.HandleIntent(context, result);
         }
 

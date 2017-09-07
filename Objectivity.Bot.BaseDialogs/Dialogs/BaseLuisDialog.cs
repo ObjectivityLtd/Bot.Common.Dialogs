@@ -68,7 +68,7 @@
             var message = await item;
             var messageText = message.Text;
             // Modify request by the service to add attributes and then by the dialog to reflect the particular query
-            var tasks = this.LuisServiceProvider.GetLuisServicesForDialog(this.GetType()).Select(service =>
+            var tasks = this.LuisServiceProvider.GetLuisServicesForDialog(this.GetType(), context).Select(service =>
             {
                 var request = service.ModifyRequest(new LuisRequest(messageText));
                 return service.QueryAsync(request, context.CancellationToken);
@@ -295,7 +295,7 @@
             }
         }
 
-        protected async Task<LuisResult> ParseDatesAndResendIfNeeded(LuisResult result, string expectedIntent = Intents.GetDate)
+        protected async Task<LuisResult> ParseDatesAndResendIfNeeded(LuisResult result, IDialogContext context, string expectedIntent = Intents.GetDate)
         {
             if (DateParser.IsStringContainsDotsInDate(result.Query))
             {
@@ -304,7 +304,7 @@
                 bool.TryParse(ConfigurationManager.AppSettings.Get("Staging"), out isStaging);
                 LuisRequest request = new LuisRequest(parsedQuery) { Staging = isStaging };
                 List<LuisResult> results = new List<LuisResult>();
-                foreach (var luisService in this.LuisServiceProvider.GetLuisServicesForDialog(this.GetType()))
+                foreach (var luisService in this.LuisServiceProvider.GetLuisServicesForDialog(this.GetType(), context))
                 {
                     results.Add(await luisService.QueryAsync(request, CancellationToken.None));
                 }

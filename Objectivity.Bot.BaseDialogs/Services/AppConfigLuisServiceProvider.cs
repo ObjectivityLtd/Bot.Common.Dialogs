@@ -5,11 +5,12 @@
     using System.Collections.Generic;
     using System.Configuration;
     using System.Linq;
+    using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Luis;
 
     public class AppConfigLuisServiceProvider : ILuisServiceProvider
     {
-        public IEnumerable<ILuisService> GetLuisServicesForDialog(Type dialogType)
+        public IEnumerable<ILuisService> GetLuisServicesForDialog(Type dialogType, IDialogContext context)
         {
             bool isStaging;
             bool.TryParse(ConfigurationManager.AppSettings.Get("Staging"), out isStaging);
