@@ -43,6 +43,9 @@ namespace Objectivity.Bot.BaseDialogs.QnA
         public async Task ReplyToChannel(IDialogContext context, string query, string noAnswerResponse) => await this.ReplyToChannel(
             context, query, async ctx => await ctx.PostAsync(noAnswerResponse));
 
+        public async Task<QnAMakerResults> GetAnswers(string query)
+            => await this.GetResultFromQnAMaker(query);
+
         private async Task<QnAMakerResults> GetResultFromQnAMaker(string query)
         {
             QnAMakerRequestBody requestBody;

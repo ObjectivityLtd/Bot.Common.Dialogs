@@ -2,6 +2,7 @@ namespace Objectivity.Bot.BaseDialogs.QnA
 {
     using System;
     using System.Threading.Tasks;
+    using Microsoft.Bot.Builder.CognitiveServices.QnAMaker;
     using Microsoft.Bot.Builder.Dialogs;
 
     public interface IQnAMaker
@@ -13,5 +14,7 @@ namespace Objectivity.Bot.BaseDialogs.QnA
         Task ReplyToChannel(IDialogContext context, string noAnswerResponse);
 
         Task ReplyToChannel(IDialogContext context, string query, string noAnswerResponse);
+
+        Task<QnAMakerResults> GetAnswers(string query);
     }
 }
