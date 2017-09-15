@@ -104,14 +104,5 @@ namespace Objectivity.Bot.BaseDialogs {
                 return ResourceManager.GetString("SpecifyParameter", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to To find out what I can do simply type &lt;b&gt;help&lt;/b&gt; or read &lt;a href=&quot;{0}&quot;&gt;Lily Guide&lt;/a&gt;.
-        /// </summary>
-        internal static string TypeHelpOrReadGuide {
-            get {
-                return ResourceManager.GetString("TypeHelpOrReadGuide", resourceCulture);
-            }
-        }
     }
 }

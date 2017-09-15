@@ -291,7 +291,7 @@
             }
             else
             {
-                await this.PostAndWaitAsync(context, this.UnrecognizedAnswerMessage ?? $"{Messages.DidNotUnderstand} {string.Format(Messages.TypeHelpOrReadGuide, ConfigurationManager.AppSettings["LilyManualUrl"])}");
+                await this.PostAndWaitAsync(context, this.UnrecognizedAnswerMessage ?? $"{Messages.DidNotUnderstand}");
             }
         }
 

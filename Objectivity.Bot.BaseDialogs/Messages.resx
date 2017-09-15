@@ -132,7 +132,4 @@
   <data name="SpecifyParameter" xml:space="preserve">
     <value>Please specify a {0}</value>
   </data>
-  <data name="TypeHelpOrReadGuide" xml:space="preserve">
-    <value>To find out what I can do simply type &lt;b&gt;help&lt;/b&gt; or read &lt;a href="{0}"&gt;Lily Guide&lt;/a&gt;</value>
-  </data>
 </root>
