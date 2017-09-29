@@ -4,8 +4,8 @@
 
     public interface ILuisDialogResponse<T> : IDialogResponse<T>
     {
-        LuisResult LuisResult { get; set; }
-
         string Intent { get; set; }
+
+        LuisResult LuisResult { get; set; }
     }
 }

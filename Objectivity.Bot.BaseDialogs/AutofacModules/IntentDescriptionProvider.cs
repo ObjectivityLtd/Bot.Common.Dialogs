@@ -1,5 +1,6 @@
 namespace Objectivity.Bot.BaseDialogs.AutofacModules
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -26,6 +27,11 @@ namespace Objectivity.Bot.BaseDialogs.AutofacModules
 
         public IEnumerable<IntentDescription> GetDescriptions(IEnumerable<string> intents)
         {
+            if (intents == null)
+            {
+                throw new ArgumentNullException(nameof(intents));
+            }
+
             List<IntentDescription> descriptions = new List<IntentDescription>();
             foreach (var intent in intents)
             {

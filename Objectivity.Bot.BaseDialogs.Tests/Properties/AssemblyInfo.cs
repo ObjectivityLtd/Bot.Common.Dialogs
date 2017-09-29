@@ -1,14 +1,15 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Bot.BaseDialogs")]
+[assembly: AssemblyTitle("Bot.BaseDialogs.Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Bot.BaseDialogs")]
+[assembly: AssemblyProduct("Bot.BaseDialogs.Tests")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,13 +20,15 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("15e751db-aa8d-47b6-8255-769bc3509af4")]
+[assembly: Guid("b73ff5b8-6b1a-4eda-85a4-66f155a6e57d")]
 
 // Version information for an assembly consists of the following four values:
+//
 //      Major Version
 //      Minor Version
 //      Build Number
 //      Revision
+//
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]

@@ -3,6 +3,7 @@ namespace Objectivity.Bot.BaseDialogs.QnA
     using System;
     using System.Linq;
     using System.Threading.Tasks;
+
     using Microsoft.Bot.Builder.CognitiveServices.QnAMaker;
     using Microsoft.Bot.Builder.Dialogs;
 
@@ -15,7 +16,12 @@ namespace Objectivity.Bot.BaseDialogs.QnA
             this.qnAService = qnAService;
         }
 
-        public async Task ReplyToChannel(IDialogContext context, string query, Func<IDialogContext, Task> noAnswerCallback)
+        public async Task<QnAMakerResults> GetAnswers(string query) => await this.GetResultFromQnAMaker(query);
+
+        public async Task ReplyToChannel(
+            IDialogContext context,
+            string query,
+            Func<IDialogContext, Task> noAnswerCallback)
         {
             var result = await this.GetResultFromQnAMaker(query);
             if (result != null && result.Answers.Any())
@@ -37,14 +43,15 @@ namespace Objectivity.Bot.BaseDialogs.QnA
             }
         }
 
-        public async Task ReplyToChannel(IDialogContext context, string noAnswerResponse) => await this.ReplyToChannel(context,
-            async ctx => await ctx.PostAsync(noAnswerResponse));
+        public async Task ReplyToChannel(IDialogContext context, string noAnswerResponse) => await this.ReplyToChannel(
+                                                                                                 context,
+                                                                                                 async ctx =>
+                                                                                                     await ctx
+                                                                                                         .PostAsync(
+                                                                                                             noAnswerResponse));
 
-        public async Task ReplyToChannel(IDialogContext context, string query, string noAnswerResponse) => await this.ReplyToChannel(
-            context, query, async ctx => await ctx.PostAsync(noAnswerResponse));
-
-        public async Task<QnAMakerResults> GetAnswers(string query)
-            => await this.GetResultFromQnAMaker(query);
+        public async Task ReplyToChannel(IDialogContext context, string query, string noAnswerResponse) =>
+            await this.ReplyToChannel(context, query, async ctx => await ctx.PostAsync(noAnswerResponse));
 
         private async Task<QnAMakerResults> GetResultFromQnAMaker(string query)
         {

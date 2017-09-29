@@ -4,10 +4,10 @@
 
     public class ApplicationSettings : IApplicationSettings
     {
-        public string Get(string key) => ConfigurationManager.AppSettings[key];
+        public string this[string key] => this.GetSetting(key);
 
-        public string Get(string key, string defaultValue) => this.Get(key) ?? defaultValue;
+        public string GetSetting(string key) => ConfigurationManager.AppSettings[key];
 
-        public string this[string key] => this.Get(key);
+        public string GetSetting(string key, string defaultValue) => this.GetSetting(key) ?? defaultValue;
     }
 }

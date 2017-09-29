@@ -3,16 +3,22 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Luis;
 
-    internal class LuisServiceProvider : ILuisServiceProvider
+    public class LuisServiceProvider : ILuisServiceProvider
     {
         private readonly ILuisModelProvider luisModelProvider;
 
         public LuisServiceProvider(ILuisModelProvider luisModelProvider)
         {
             this.luisModelProvider = luisModelProvider;
+        }
+
+        public IEnumerable<ILuisService> GetDefaultLuisServices(string cultureCode = "en-us")
+        {
+            throw new NotImplementedException();
         }
 
         public IEnumerable<ILuisService> GetLuisServicesForDialog(Type dialogType, IDialogContext dialogContext)
@@ -22,7 +28,7 @@
                 throw new ArgumentNullException(nameof(dialogType));
             }
 
-            if (! dialogType.IsAssignableFrom(typeof(IDialog)))
+            if (!dialogType.IsAssignableFrom(typeof(IDialog)))
             {
                 throw new ArgumentException($"{dialogType.Name} type does not implement IDialog");
             }
@@ -34,11 +40,6 @@
             }
 
             return Enumerable.Empty<ILuisService>();
-        }
-
-        public IEnumerable<ILuisService> GetDefaultLuisServices(string cultureCode = "en-us")
-        {
-            throw new NotImplementedException();
         }
     }
 }

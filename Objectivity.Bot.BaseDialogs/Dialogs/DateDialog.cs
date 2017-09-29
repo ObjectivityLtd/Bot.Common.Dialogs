@@ -3,9 +3,11 @@
     using System;
     using System.Linq;
     using System.Threading.Tasks;
-    using Bot.BaseDialogs.LuisApp;
+
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Luis.Models;
+
+    using Objectivity.Bot.BaseDialogs.LuisApp;
 
     [Serializable]
     public class DateDialog : PromptValueDialog<DateTime?>
@@ -14,9 +16,10 @@
 
         public DateDialog(string promptMessage = null, string unrecognisedAnswerMessage = null)
         {
-            var specifyRequest = string.Format(Messages.SpecifyParameter, DateDialog.ParameterName);
+            var specifyRequest = string.Format(Messages.SpecifyParameter, ParameterName);
             this.PromptMessage = promptMessage ?? specifyRequest;
-            this.UnrecognizedAnswerMessage = unrecognisedAnswerMessage ?? $"{Messages.DidNotUnderstand} {specifyRequest}";
+            this.UnrecognizedAnswerMessage = unrecognisedAnswerMessage
+                                             ?? $"{Messages.DidNotUnderstand} {specifyRequest}";
         }
 
         [LuisIntent(Intents.GetDate)]

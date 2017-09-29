@@ -7,32 +7,35 @@
     using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
-    using Bot.BaseDialogs.LuisApp;
-    using Bot.BaseDialogs.Services;
+
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Dialogs.Internals;
     using Microsoft.Bot.Builder.Luis;
     using Microsoft.Bot.Builder.Luis.Models;
     using Microsoft.Bot.Connector;
+
     using Newtonsoft.Json;
+
     using NLog;
-    using Objectivity.Bot.Utils;
-    using Utils;
+
+    using Objectivity.Bot.BaseDialogs.LuisApp;
+    using Objectivity.Bot.BaseDialogs.Services;
+    using Objectivity.Bot.BaseDialogs.Utils;
 
     [Serializable]
     public abstract class BaseLuisDialog<T> : IDialog<ILuisDialogResponse<T>>
     {
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
+
         public IDialogFactory DialogFactory { get; set; }
+
+        public IIntentsPicker IntentsPicker { get; set; }
 
         public ILuisServiceProvider LuisServiceProvider { get; set; }
 
-        public bool WaitForLuisResultOnStart { get; set; }
-
         public string UnrecognizedAnswerMessage { get; set; }
 
-        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
-
-        public IIntentsPicker IntentsPicker { get; set; }
+        public bool WaitForLuisResultOnStart { get; set; }
 
         public virtual async Task StartAsync(IDialogContext context)
         {
@@ -46,52 +49,13 @@
             }
         }
 
-        protected virtual async Task LuisResultReceived(IDialogContext context, IAwaitable<LuisResult> result)
-        {
-            try
-            {
-                await this.HandleLuisResultAsync(context, await result);
-            }
-            catch (Exception e)
-            {
-                var activity = context.Activity as Activity;
-                Logger.Fatal($"message: {activity?.Text} \n {e}");
-
-                await context.PostAsync(Messages.CodeError);
-                context.Wait(this.MessageReceived);
-            }
-            
-        }
-
-        protected virtual async Task MessageReceived(IDialogContext context, IAwaitable<IMessageActivity> item)
-        {
-            var message = await item;
-            var messageText = message.Text;
-            // Modify request by the service to add attributes and then by the dialog to reflect the particular query
-            var tasks = this.LuisServiceProvider.GetLuisServicesForDialog(this.GetType(), context).Select(service =>
-            {
-                var request = service.ModifyRequest(new LuisRequest(messageText));
-                return service.QueryAsync(request, context.CancellationToken);
-            }).ToArray();
-
-            var results = await Task.WhenAll(tasks);
-
-            var resultWithStrongestBestIntent =
-                results.Select(result => new { Result = result, BestIntent = this.BestIntentFrom(result) })
-                    .Where(r => r.BestIntent != null)
-                    .MaxBy(r => r.BestIntent.Score ?? 0d)
-                    .Result;
-
-            if (resultWithStrongestBestIntent == null)
-            {
-                throw new InvalidOperationException("No winning intent selected from Luis results.");
-            }
-
-            await this.HandleLuisResultAsync(context, resultWithStrongestBestIntent);
-        }
-
         protected virtual IntentRecommendation BestIntentFrom(LuisResult result)
         {
+            if (result == null)
+            {
+                throw new ArgumentNullException(nameof(result));
+            }
+
             return result.TopScoringIntent ?? result.Intents?.MaxBy(i => i.Score ?? 0d);
         }
 
@@ -100,35 +64,35 @@
             return results.MaxBy(i => i.BestIntent.Score ?? 0d);
         }
 
-        protected virtual async Task HandleLuisResultAsync(IDialogContext context, LuisResult result)
+        protected virtual async Task DefaultResumeAfterAsync<TResponse>(
+            IDialogContext context,
+            IAwaitable<ILuisDialogResponse<TResponse>> result)
         {
-            if (result?.Intents == null || !result.Intents.Any())
+            var dialogResponse = await result;
+            switch (dialogResponse.ResponseType)
             {
-                throw new ApplicationException("Luis result is empty");
+                case ResponseType.RedirectWithLuisResult:
+                    this.Redirect(context, dialogResponse.LuisResult);
+                    break;
+                case ResponseType.RedirectWithIntent:
+                    this.Redirect(context, dialogResponse.Intent);
+                    break;
+                default:
+                    context.Wait(this.MessageReceived);
+                    break;
             }
-
-            await this.IntentsPicker.PickCorrectIntent(context, result, this.HandleLuisIntent);
         }
 
-        private async Task HandleLuisIntent(IDialogContext context, LuisResult result)
+        protected virtual void EndDialog(IDialogContext context, T response)
         {
-            var knownHandlers = this.EnumerateHandlers().ToDictionary(kv => kv.Key, kv => kv.Value);
-            IntentHandler handler;
-            if (!knownHandlers.TryGetValue(result.GetStrongestIntent().Intent, out handler))
+            if (context == null)
             {
-                handler = knownHandlers[string.Empty];
-            }
-
-            if (handler != null)
-            {
-                await handler(context, result);
-            }
-            else
-            {
-                var ex = new Exception("No default intent handler found.");
-                BaseLuisDialog<T>.Logger.Error(ex, ex.Message);
+                var ex = new ArgumentNullException(nameof(context));
+                Logger.Error(ex);
                 throw ex;
             }
+
+            context.Done(new LuisDialogResponse<T> { ResponseType = ResponseType.Regular, Response = response });
         }
 
         protected IEnumerable<KeyValuePair<string, IntentHandler>> EnumerateHandlers()
@@ -147,13 +111,15 @@
                 IntentHandler intentHandler = null;
                 try
                 {
-                    intentHandler =
-                        (IntentHandler)
-                        Delegate.CreateDelegate(typeof(IntentHandler), this, method, throwOnBindFailure: false);
+                    intentHandler = (IntentHandler)Delegate.CreateDelegate(
+                        typeof(IntentHandler),
+                        this,
+                        method,
+                        throwOnBindFailure: false);
                 }
                 catch (ArgumentException)
                 {
-                    BaseLuisDialog<T>.Logger.Error(
+                    Logger.Error(
                         $"Cannot bind to the target method {method.Name} because its signature or security transparency is not compatible with that of the delegate type.");
                 }
 
@@ -189,21 +155,97 @@
             await context.Forward(dialog, resumeAfter ?? this.DefaultResumeAfterAsync, result, CancellationToken.None);
         }
 
-        protected virtual async Task DefaultResumeAfterAsync<TResponse>(IDialogContext context, IAwaitable<ILuisDialogResponse<TResponse>> result)
+        protected virtual async Task HandleLuisResultAsync(IDialogContext context, LuisResult result)
         {
-            var dialogResponse = await result;
-            switch (dialogResponse.ResponseType)
+            if (result?.Intents == null || !result.Intents.Any())
             {
-                case ResponseType.RedirectWithLuisResult:
-                    this.Redirect(context, dialogResponse.LuisResult);
-                    break;
-                case ResponseType.RedirectWithIntent:
-                    this.Redirect(context, dialogResponse.Intent);
-                    break;
-                default:
-                    context.Wait(this.MessageReceived);
-                    break;
+                throw new ApplicationException("Luis result is empty");
             }
+
+            await this.IntentsPicker.PickCorrectIntent(context, result, this.HandleLuisIntent);
+        }
+
+        protected virtual async Task LuisResultReceived(IDialogContext context, IAwaitable<LuisResult> result)
+        {
+            try
+            {
+                await this.HandleLuisResultAsync(context, await result);
+            }
+            catch (Exception e)
+            {
+                var activity = context.Activity as Activity;
+                Logger.Fatal($"message: {activity?.Text} \n {e}");
+
+                await context.PostAsync(Messages.CodeError);
+                context.Wait(this.MessageReceived);
+            }
+        }
+
+        protected virtual async Task MessageReceived(IDialogContext context, IAwaitable<IMessageActivity> item)
+        {
+            var message = await item;
+            var messageText = message.Text;
+
+            // Modify request by the service to add attributes and then by the dialog to reflect the particular query
+            var tasks = this.LuisServiceProvider.GetLuisServicesForDialog(this.GetType(), context).Select(
+                service =>
+                    {
+                        var request = service.ModifyRequest(new LuisRequest(messageText));
+                        return service.QueryAsync(request, context.CancellationToken);
+                    }).ToArray();
+
+            var results = await Task.WhenAll(tasks);
+
+            var resultWithStrongestBestIntent = results
+                .Select(result => new { Result = result, BestIntent = this.BestIntentFrom(result) })
+                .Where(r => r.BestIntent != null).MaxBy(r => r.BestIntent.Score ?? 0d).Result;
+
+            if (resultWithStrongestBestIntent == null)
+            {
+                throw new InvalidOperationException("No winning intent selected from Luis results.");
+            }
+
+            await this.HandleLuisResultAsync(context, resultWithStrongestBestIntent);
+        }
+
+        protected async Task<LuisResult> ParseDatesAndResendIfNeeded(
+            LuisResult result,
+            IDialogContext context,
+            string expectedIntent = Intents.GetDate)
+        {
+            if (DateParser.IsStringContainsDotsInDate(result.Query))
+            {
+                var parsedQuery = DateParser.ParseDotsToDashes(result.Query);
+                bool isStaging;
+                bool.TryParse(ConfigurationManager.AppSettings.Get("Staging"), out isStaging);
+                LuisRequest request = new LuisRequest(parsedQuery) { Staging = isStaging };
+                List<LuisResult> results = new List<LuisResult>();
+                foreach (var luisService in this.LuisServiceProvider.GetLuisServicesForDialog(this.GetType(), context))
+                {
+                    results.Add(await luisService.QueryAsync(request, CancellationToken.None));
+                }
+
+                return results.Where(s => s.TopScoringIntent.Intent == expectedIntent)
+                    .OrderBy(s => s.TopScoringIntent.Score).FirstOrDefault();
+            }
+
+            return result;
+        }
+
+        protected virtual async Task PostAndWaitAsync(IDialogContext context, string message)
+        {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            await context.PostAsync(message);
+            context.Wait(this.MessageReceived);
+        }
+
+        protected async Task PostLuisResultAndWaitAsync(IDialogContext context, LuisResult result)
+        {
+            await this.PostAndWaitAsync(context, JsonConvert.SerializeObject(result));
         }
 
         protected virtual void Redirect(IDialogContext context, string intent)
@@ -211,15 +253,11 @@
             if (context == null)
             {
                 var ex = new ArgumentNullException(nameof(context));
-                BaseLuisDialog<T>.Logger.Error(ex);
+                Logger.Error(ex);
                 throw ex;
             }
 
-            context.Done(new LuisDialogResponse<T>
-            {
-                ResponseType = ResponseType.RedirectWithIntent,
-                Intent = intent
-            });
+            context.Done(new LuisDialogResponse<T> { ResponseType = ResponseType.RedirectWithIntent, Intent = intent });
         }
 
         protected virtual void Redirect(IDialogContext context, LuisResult result)
@@ -227,18 +265,17 @@
             if (context == null)
             {
                 var ex = new ArgumentNullException(nameof(context));
-                BaseLuisDialog<T>.Logger.Error(ex);
+                Logger.Error(ex);
                 throw ex;
             }
 
-            context.Done(new LuisDialogResponse<T>
-            {
-                ResponseType = ResponseType.RedirectWithLuisResult,
-                LuisResult = result
-            });
+            context.Done(
+                new LuisDialogResponse<T> { ResponseType = ResponseType.RedirectWithLuisResult, LuisResult = result });
         }
 
-        protected bool RedirectIfNeeded<TResponse>(IDialogContext context, ILuisDialogResponse<TResponse> dialogResponse)
+        protected bool RedirectIfNeeded<TResponse>(
+            IDialogContext context,
+            ILuisDialogResponse<TResponse> dialogResponse)
         {
             if (dialogResponse == null)
             {
@@ -258,27 +295,6 @@
             return false;
         }
 
-        protected async Task PostLuisResultAndWaitAsync(IDialogContext context, LuisResult result)
-        {
-            await this.PostAndWaitAsync(context, JsonConvert.SerializeObject(result));
-        }
-
-        protected virtual void EndDialog(IDialogContext context, T response)
-        {
-            if (context == null)
-            {
-                var ex = new ArgumentNullException(nameof(context));
-                BaseLuisDialog<T>.Logger.Error(ex);
-                throw ex;
-            }
-
-            context.Done(new LuisDialogResponse<T>
-            {
-                ResponseType = ResponseType.Regular,
-                Response = response
-            });
-        }
-
         [LuisIntent("")]
         protected virtual async Task WildcardIntentHandlerAsync(IDialogContext context, LuisResult result)
         {
@@ -295,38 +311,25 @@
             }
         }
 
-        protected async Task<LuisResult> ParseDatesAndResendIfNeeded(LuisResult result, IDialogContext context, string expectedIntent = Intents.GetDate)
+        private async Task HandleLuisIntent(IDialogContext context, LuisResult result)
         {
-            if (DateParser.IsStringContainsDotsInDate(result.Query))
+            var knownHandlers = this.EnumerateHandlers().ToDictionary(kv => kv.Key, kv => kv.Value);
+            IntentHandler handler;
+            if (!knownHandlers.TryGetValue(result.GetStrongestIntent().Intent, out handler))
             {
-                var parsedQuery = DateParser.ParseDotsToDashes(result.Query);
-                bool isStaging;
-                bool.TryParse(ConfigurationManager.AppSettings.Get("Staging"), out isStaging);
-                LuisRequest request = new LuisRequest(parsedQuery) { Staging = isStaging };
-                List<LuisResult> results = new List<LuisResult>();
-                foreach (var luisService in this.LuisServiceProvider.GetLuisServicesForDialog(this.GetType(), context))
-                {
-                    results.Add(await luisService.QueryAsync(request, CancellationToken.None));
-                }
-
-                return results
-                    .Where(s => s.TopScoringIntent.Intent == expectedIntent)
-                    .OrderBy(s => s.TopScoringIntent.Score)
-                    .FirstOrDefault();
+                handler = knownHandlers[string.Empty];
             }
 
-            return result;
-        }
-
-        protected virtual async Task PostAndWaitAsync(IDialogContext context, string message)
-        {
-            if (context == null)
+            if (handler != null)
             {
-                throw new ArgumentNullException(nameof(context));
+                await handler(context, result);
             }
-
-            await context.PostAsync(message);
-            context.Wait(this.MessageReceived);
+            else
+            {
+                var ex = new Exception("No default intent handler found.");
+                Logger.Error(ex, ex.Message);
+                throw ex;
+            }
         }
     }
 }

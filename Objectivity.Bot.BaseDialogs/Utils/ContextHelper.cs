@@ -2,6 +2,7 @@
 {
     using System;
     using System.Threading.Tasks;
+
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
 
@@ -23,19 +24,21 @@
             return result;
         }
 
-        public static bool TryGetValueFromContext<T>(this IDialogContext context, string key, out T value)
+        public static async Task<T> GetValueFromState<T>(this IDialogContext context, string key)
         {
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if (context.UserData.TryGetValue(key, out value))
+            using (StateClient stateClient = context.Activity.GetStateClient())
             {
-                return true;
-            }
+                IBotState chatbotState = stateClient.BotState;
+                BotData chatbotData =
+                    await chatbotState.GetUserDataAsync(context.Activity.ChannelId, context.Activity.From.Id);
 
-            return false;
+                return chatbotData.GetProperty<T>(key);
+            }
         }
 
         public static void SetValueIntoContext<T>(this IDialogContext context, string key, T value)
@@ -57,32 +60,28 @@
 
             using (StateClient stateClient = context.Activity.GetStateClient())
             {
-
                 IBotState chatbotState = stateClient.BotState;
-                BotData chatbotData = await chatbotState.GetUserDataAsync(
-                    context.Activity.ChannelId, context.Activity.From.Id);
+                BotData chatbotData =
+                    await chatbotState.GetUserDataAsync(context.Activity.ChannelId, context.Activity.From.Id);
 
                 chatbotData.SetProperty(key, value);
                 await chatbotState.SetUserDataAsync(context.Activity.ChannelId, context.Activity.From.Id, chatbotData);
             }
         }
 
-        public static async Task<T> GetValueFromState<T>(this IDialogContext context, string key)
+        public static bool TryGetValueFromContext<T>(this IDialogContext context, string key, out T value)
         {
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
 
-            using (StateClient stateClient = context.Activity.GetStateClient())
+            if (context.UserData.TryGetValue(key, out value))
             {
-                IBotState chatbotState = stateClient.BotState;
-                BotData chatbotData =
-                    await chatbotState.GetUserDataAsync(context.Activity.ChannelId, context.Activity.From.Id);
-
-                return chatbotData.GetProperty<T>(key);
+                return true;
             }
-        }
 
+            return false;
+        }
     }
 }

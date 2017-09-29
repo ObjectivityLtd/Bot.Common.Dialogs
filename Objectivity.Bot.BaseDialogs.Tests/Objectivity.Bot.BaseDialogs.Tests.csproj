@@ -1,17 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{15E751DB-AA8D-47B6-8255-769BC3509AF4}</ProjectGuid>
+    <ProjectGuid>{B73FF5B8-6B1A-4EDA-85A4-66F155A6E57D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Objectivity.Bot.BaseDialogs</RootNamespace>
-    <AssemblyName>Objectivity.Bot.BaseDialogs</AssemblyName>
+    <RootNamespace>Objectivity.Bot.BaseDialogs.Tests</RootNamespace>
+    <AssemblyName>Objectivity.Bot.BaseDialogs.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,7 +20,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,28 +28,36 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>..\Analysers.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <CodeAnalysisRuleSet>..\AnalysersTests.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autofac, Version=4.6.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)\packages\Autofac.4.6.0\lib\net45\Autofac.dll</HintPath>
     </Reference>
+    <Reference Include="Castle.Core, Version=4.1.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)\packages\Castle.Core.4.1.1\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Chronic, Version=0.3.2.0, Culture=neutral, PublicKeyToken=3bd1f1ef638b0d3c, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)\packages\Chronic.Signed.0.3.2\lib\net40\Chronic.dll</HintPath>
     </Reference>
+    <Reference Include="FluentAssertions, Version=4.19.3.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)\packages\FluentAssertions.4.19.3\lib\net45\FluentAssertions.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentAssertions.Core, Version=4.19.3.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)\packages\FluentAssertions.4.19.3\lib\net45\FluentAssertions.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="JetBrains.Annotations, Version=10.4.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)\packages\JetBrains.Annotations.10.4.0\lib\net\JetBrains.Annotations.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Bot.Builder, Version=3.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bot.Builder.3.9.0.0\lib\net46\Microsoft.Bot.Builder.dll</HintPath>
+      <HintPath>$(SolutionDir)\packages\Microsoft.Bot.Builder.3.9.0.0\lib\net46\Microsoft.Bot.Builder.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Bot.Builder.Autofac, Version=3.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bot.Builder.3.9.0.0\lib\net46\Microsoft.Bot.Builder.Autofac.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Bot.Builder.CognitiveServices.QnAMaker, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)\packages\Microsoft.Bot.Builder.CognitiveServices.1.1.0\lib\net46\Microsoft.Bot.Builder.CognitiveServices.QnAMaker.dll</HintPath>
+      <HintPath>$(SolutionDir)\packages\Microsoft.Bot.Builder.3.9.0.0\lib\net46\Microsoft.Bot.Builder.Autofac.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Bot.Connector, Version=3.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bot.Builder.3.9.0.0\lib\net46\Microsoft.Bot.Connector.dll</HintPath>
+      <HintPath>$(SolutionDir)\packages\Microsoft.Bot.Builder.3.9.0.0\lib\net46\Microsoft.Bot.Connector.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.IdentityModel.Protocol.Extensions, Version=1.0.40306.1554, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)\packages\Microsoft.IdentityModel.Protocol.Extensions.1.0.4.403061554\lib\net45\Microsoft.IdentityModel.Protocol.Extensions.dll</HintPath>
@@ -59,14 +65,25 @@
     <Reference Include="Microsoft.Rest.ClientRuntime, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)\packages\Microsoft.Rest.ClientRuntime.2.3.8\lib\net452\Microsoft.Rest.ClientRuntime.dll</HintPath>
     </Reference>
+    <Reference Include="Moq, Version=4.7.63.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)\packages\Moq.4.7.63\lib\net45\Moq.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)\packages\NLog.4.4.11\lib\net45\NLog.dll</HintPath>
+    <Reference Include="Objectivity.AutoFixture.XUnit2.AutoMoq, Version=1.1.2.0, Culture=neutral, PublicKeyToken=0fa1ac92399d741f, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)\packages\Objectivity.AutoFixture.XUnit2.AutoMoq.1.1.2\lib\net452\Objectivity.AutoFixture.XUnit2.AutoMoq.dll</HintPath>
+    </Reference>
+    <Reference Include="Ploeh.AutoFixture, Version=3.50.0.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)\packages\AutoFixture.3.50.3\lib\net40\Ploeh.AutoFixture.dll</HintPath>
+    </Reference>
+    <Reference Include="Ploeh.AutoFixture.AutoMoq, Version=3.50.0.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)\packages\AutoFixture.AutoMoq.3.50.3\lib\net40\Ploeh.AutoFixture.AutoMoq.dll</HintPath>
+    </Reference>
+    <Reference Include="Ploeh.AutoFixture.Xunit2, Version=3.50.0.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)\packages\AutoFixture.Xunit2.3.50.3\lib\net45\Ploeh.AutoFixture.Xunit2.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.IdentityModel.Tokens.Jwt, Version=4.0.40306.1554, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)\packages\System.IdentityModel.Tokens.Jwt.4.0.4.403061554\lib\net45\System.IdentityModel.Tokens.Jwt.dll</HintPath>
@@ -86,84 +103,36 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="xunit.abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)\packages\xunit.abstractions.2.0.1\lib\net35\xunit.abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.assert, Version=2.2.0.3545, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)\packages\xunit.assert.2.2.0\lib\netstandard1.1\xunit.assert.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.core, Version=2.2.0.3545, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)\packages\xunit.extensibility.core.2.2.0\lib\netstandard1.1\xunit.core.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.execution.desktop, Version=2.2.0.3545, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)\packages\xunit.extensibility.execution.2.2.0\lib\net452\xunit.execution.desktop.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutofacModules\BaseDialogsModule.cs" />
-    <Compile Include="AutofacModules\BotFrameworkUtilsModule.cs" />
-    <Compile Include="AutofacModules\IIntentDescriptionProvider.cs" />
-    <Compile Include="AutofacModules\IntentDescription.cs" />
-    <Compile Include="AutofacModules\IntentDescriptionProvider.cs" />
-    <Compile Include="Utils\ApplicationSettings.cs" />
-    <Compile Include="Utils\ContextHelper.cs" />
-    <Compile Include="Utils\CustomPostUnhandledExceptionToUser.cs" />
-    <Compile Include="Dialogs\DialogFactory.cs" />
-    <Compile Include="QnA\IQnAMaker.cs" />
-    <Compile Include="QnA\QnAMaker.cs" />
-    <Compile Include="Dialogs\SkippableChoiceDialog.cs" />
-    <Compile Include="Dialogs\SkippablePromptConfirm.cs" />
-    <Compile Include="Dialogs\SkippablePromptValueDialog.cs" />
-    <Compile Include="LuisApp\EntityParsingHelper.cs" />
-    <Compile Include="LuisApp\EntityResolutionTypes.cs" />
-    <Compile Include="LuisApp\EntityTypes.cs" />
-    <Compile Include="Dialogs\IDialogFactory.cs" />
-    <Compile Include="Dialogs\IDialogResponse.cs" />
-    <Compile Include="Utils\DateParser.cs" />
-    <Compile Include="Utils\EnumExtensions.cs" />
-    <Compile Include="Utils\IApplicationSettings.cs" />
-    <Compile Include="Utils\IIntentLogger.cs" />
-    <Compile Include="Dialogs\ILuisDialogResponse.cs" />
-    <Compile Include="Utils\IIntentsPicker.cs" />
-    <Compile Include="Utils\IntentLogger.cs" />
-    <Compile Include="LuisApp\Intents.cs" />
-    <Compile Include="Dialogs\LuisDialogResponse.cs" />
-    <Compile Include="Dialogs\DateDialog.cs" />
-    <Compile Include="Services\ILuisModelProvider.cs" />
-    <Compile Include="Services\ILuisServiceProvider.cs" />
-    <Compile Include="Services\LuisModelProvider.cs" />
-    <Compile Include="Services\LuisServiceDialogRegistration.cs" />
-    <Compile Include="Services\AppConfigLuisServiceProvider.cs" />
-    <Compile Include="Services\LuisServiceProvider.cs" />
-    <Compile Include="Dialogs\BaseLuisDialog.cs" />
-    <Compile Include="Messages.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Messages.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\PromptValueDialog.cs" />
+    <Compile Include="DateParserTests.cs" />
+    <Compile Include="IntentPickerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Dialogs\ResponseType.cs" />
-    <Compile Include="Utils\IntentsPicker.cs" />
-    <Compile Include="Utils\LocalizedDescriptionAttribute.cs" />
-    <Compile Include="Utils\LuisResultExtensions.cs" />
-    <Compile Include="Utils\RegexHelper.cs" />
-    <Compile Include="Utils\SkippableDialogForwarder.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <Content Include="NLog.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <None Include="NLog.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Messages.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Messages.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    <ProjectReference Include="..\Objectivity.Bot.BaseDialogs\Objectivity.Bot.BaseDialogs.csproj">
+      <Project>{15e751db-aa8d-47b6-8255-769bc3509af4}</Project>
+      <Name>Objectivity.Bot.BaseDialogs</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
-    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

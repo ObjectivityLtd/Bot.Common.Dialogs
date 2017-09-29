@@ -1,9 +1,10 @@
 ﻿namespace Objectivity.Bot.BaseDialogs.Utils
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
+
     using Microsoft.Bot.Builder.Luis.Models;
+
     using NLog;
 
     public class IntentLogger : IIntentLogger
@@ -17,7 +18,9 @@
                 throw new ArgumentNullException(nameof(result));
             }
 
-            var intentText = string.Join(" | ", result.Intents.Take(maxIntents).Select(s => $"Intent '{s.Intent}' (score {s.Score ?? 0})"));
+            var intentText = string.Join(
+                " | ",
+                result.Intents.Take(maxIntents).Select(s => $"Intent '{s.Intent}' (score {s.Score ?? 0})"));
             string entityText;
             switch (result.Entities.Count)
             {
@@ -26,22 +29,21 @@
                     break;
                 case 1:
                     var firstEntity = result.Entities.First();
-                    entityText =
-                        $" Entity '{firstEntity.Entity}' (score {firstEntity.Score}, type {firstEntity.Type})";
+                    entityText = $" Entity '{firstEntity.Entity}' (score {firstEntity.Score}, type {firstEntity.Type})";
                     break;
                 default:
                     entityText =
                         $" Entities {string.Join(", ", result.Entities.Select(e => $"'{e.Entity}' (score {e.Score}, type {e.Type})"))}";
-                    IntentLogger.Logger.Warn("More than one entity!");
+                    Logger.Warn("More than one entity!");
                     break;
             }
 
-            IntentLogger.Logger.Debug($"{intentText}{entityText} recognized for text '{result.Query}' comment: {comment}");
+            Logger.Debug($"{intentText}{entityText} recognized for text '{result.Query}' comment: {comment}");
         }
 
         void IIntentLogger.LogLuisResult(LuisResult result, int maxIntentsToDescribe, string comment)
         {
-            IntentLogger.LogLuisResult(result, maxIntentsToDescribe, comment);
+            LogLuisResult(result, maxIntentsToDescribe, comment);
         }
     }
 }

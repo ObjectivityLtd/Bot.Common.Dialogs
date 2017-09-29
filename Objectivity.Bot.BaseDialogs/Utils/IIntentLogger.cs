@@ -1,6 +1,5 @@
 ﻿namespace Objectivity.Bot.BaseDialogs.Utils
 {
-    using System.Collections.Generic;
     using Microsoft.Bot.Builder.Luis.Models;
 
     public interface IIntentLogger

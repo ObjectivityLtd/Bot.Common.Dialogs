@@ -1,9 +1,11 @@
 ﻿namespace Objectivity.Bot.BaseDialogs.AutofacModules
 {
     using Autofac;
+
     using Microsoft.Bot.Builder.Autofac.Base;
     using Microsoft.Bot.Builder.Dialogs.Internals;
-    using Utils;
+
+    using Objectivity.Bot.BaseDialogs.Utils;
 
     public class BotFrameworkUtilsModule : Module
     {
@@ -11,7 +13,8 @@
         {
             base.Load(builder);
 
-            builder.RegisterType<CustomPostUnhandledExceptionToUser>().Keyed<IPostToBot>(typeof(CustomPostUnhandledExceptionToUser)).InstancePerLifetimeScope();
+            builder.RegisterType<CustomPostUnhandledExceptionToUser>()
+                .Keyed<IPostToBot>(typeof(CustomPostUnhandledExceptionToUser)).InstancePerLifetimeScope();
             builder.RegisterAdapterChain<IPostToBot>(
                 typeof(EventLoopDialogTask),
                 typeof(SetAmbientThreadCulture),
@@ -19,8 +22,7 @@
                 typeof(ExceptionTranslationDialogTask),
                 typeof(SerializeByConversation),
                 typeof(CustomPostUnhandledExceptionToUser),
-                typeof(LogPostToBot)
-            ).InstancePerLifetimeScope();
+                typeof(LogPostToBot)).InstancePerLifetimeScope();
         }
     }
 }

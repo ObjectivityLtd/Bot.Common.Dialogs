@@ -3,9 +3,10 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+
     using Microsoft.Bot.Builder.Luis;
 
-    internal class LuisModelProvider : ILuisModelProvider
+    public class LuisModelProvider : ILuisModelProvider
     {
         private readonly IEnumerable<LuisServiceDialogRegistration> luisServiceDialogRegistrations;
 
@@ -19,8 +20,7 @@
             if (this.luisServiceDialogRegistrations != null && this.luisServiceDialogRegistrations.Any())
             {
                 return this.luisServiceDialogRegistrations.Where(r => r.DialogType == dialogType)
-                    .Select(r => r.LuisModel)
-                    .ToList();
+                    .Select(r => r.LuisModel).ToList();
             }
 
             return Enumerable.Empty<ILuisModel>();

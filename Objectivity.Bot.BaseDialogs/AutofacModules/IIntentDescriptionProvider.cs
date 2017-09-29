@@ -7,6 +7,5 @@ namespace Objectivity.Bot.BaseDialogs.AutofacModules
         IEnumerable<IntentDescription> GetDescriptions(string intent);
 
         IEnumerable<IntentDescription> GetDescriptions(IEnumerable<string> intents);
-
     }
 }

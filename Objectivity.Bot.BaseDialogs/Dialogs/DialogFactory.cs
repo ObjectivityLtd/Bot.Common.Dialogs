@@ -1,8 +1,10 @@
 ﻿namespace Objectivity.Bot.BaseDialogs.Dialogs
 {
     using System;
+
     using Autofac;
     using Autofac.Core;
+
     using NLog;
 
     public class DialogFactory : IDialogFactory
@@ -24,7 +26,7 @@
             }
             catch (Exception ex)
             {
-                DialogFactory.Logger.Error(ex);
+                Logger.Error(ex);
                 throw;
             }
         }
