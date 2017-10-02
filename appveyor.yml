@@ -1,5 +1,6 @@
 version: 0.0.{build}
 configuration: Release
+image: Visual Studio 2017
 nuget:
   account_feed: true
   project_feed: true
