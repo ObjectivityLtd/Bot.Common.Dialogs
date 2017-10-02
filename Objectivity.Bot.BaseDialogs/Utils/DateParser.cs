@@ -27,8 +27,7 @@
             }
 
             // "2015-09-30"
-            DateTime date;
-            if (TryParseDateWithPriorFormat(dateValue, out date, isParsable ? null : "yyyy-MM-dd"))
+            if (TryParseDateWithPriorFormat(dateValue, out DateTime date, isParsable ? null : "yyyy-MM-dd"))
             {
                 return date;
             }
@@ -37,10 +36,8 @@
             var weekNumberMatch = RegexHelper.GetRegex(EnumRegexTypes.WeekNumberMatch).Match(dateValue);
             if (weekNumberMatch.Success)
             {
-                int year;
-                int weekNumber;
-                int.TryParse(weekNumberMatch.Groups["year"].Value, out year);
-                int.TryParse(weekNumberMatch.Groups["weekNumber"].Value, out weekNumber);
+                int.TryParse(weekNumberMatch.Groups["year"].Value, out int year);
+                int.TryParse(weekNumberMatch.Groups["weekNumber"].Value, out int weekNumber);
                 return FirstDateOfWeek(year, weekNumber, new CultureInfo("pl-PL")); // first monday
             }
 
@@ -48,8 +45,7 @@
             var dayOfTheWeekMatch = RegexHelper.GetRegex(EnumRegexTypes.DayOfTheWeekMatch).Match(dateValue);
             if (dayOfTheWeekMatch.Success)
             {
-                int desiredDayOfWeek;
-                int.TryParse(dayOfTheWeekMatch.Groups["dayOfWeek"].Value, out desiredDayOfWeek);
+                int.TryParse(dayOfTheWeekMatch.Groups["dayOfWeek"].Value, out int desiredDayOfWeek);
                 var todayDayOfWeek = (int)today.DayOfWeek;
                 return today.AddDays(desiredDayOfWeek - todayDayOfWeek);
             }
@@ -58,15 +54,12 @@
             var monthOfTheYearMatch = RegexHelper.GetRegex(EnumRegexTypes.MonthOfTheYearMatch).Match(dateValue);
             if (monthOfTheYearMatch.Success)
             {
-                int desiredMonthOfTheYear;
-                int year;
-
-                if (!int.TryParse(weekNumberMatch.Groups["year"].Value, out year))
+                if (!int.TryParse(weekNumberMatch.Groups["year"].Value, out int year))
                 {
                     year = DateTime.Now.Year;
                 }
 
-                if (int.TryParse(monthOfTheYearMatch.Groups["monthOfTheYear"].Value, out desiredMonthOfTheYear))
+                if (int.TryParse(monthOfTheYearMatch.Groups["monthOfTheYear"].Value, out int desiredMonthOfTheYear))
                 {
                     return desiredMonthOfTheYear > DateTime.Now.Month
                                ? new DateTime(year, desiredMonthOfTheYear, 1)
@@ -104,19 +97,18 @@
 
         private static bool TryParseDateWithPriorFormat(string date, out DateTime dateTime, string format = null)
         {
-            DateTime tempDate = DateTime.MinValue;
             if (!DateTime.TryParseExact(
                     date,
                     format ?? "yyyy-dd-MM",
                     CultureInfo.CurrentCulture,
                     DateTimeStyles.None,
-                    out tempDate))
+                    out DateTime tempDate))
             {
                 DateTime.TryParse(date, out tempDate);
             }
 
             dateTime = tempDate;
-            return tempDate > DateTime.MinValue;
+            return tempDate != default(DateTime);
         }
     }
 }

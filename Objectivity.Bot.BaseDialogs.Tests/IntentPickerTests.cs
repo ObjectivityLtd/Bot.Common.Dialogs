@@ -67,17 +67,17 @@
             var contextMock = new Mock<IDialogContext>();
 
             providerMock.Setup(provider => provider.GetDescriptions(It.IsAny<IEnumerable<string>>())).Returns(
-                () => new List<IntentDescription>()
+                () => new List<IntentDescription>
                           {
-                              new IntentDescription() { Intent = "A", Description = "A" },
-                              new IntentDescription() { Intent = "B", Description = "B" }
+                              new IntentDescription { Intent = "A", Description = "A" },
+                              new IntentDescription { Intent = "B", Description = "B" }
                           });
 
             var unit = new IntentsPicker(providerMock.Object, loggerMock.Object);
             var result = new LuisResult()
                              {
                                  Intents =
-                                     new List<IntentRecommendation>()
+                                     new List<IntentRecommendation>
                                          {
                                              new IntentRecommendation(
                                                  "A",

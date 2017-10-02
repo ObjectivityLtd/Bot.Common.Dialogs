@@ -25,14 +25,12 @@
                 return null;
             }
 
-            object jarray;
-            if (!entityRecommendation.Resolution.TryGetValue(EntityResolutionTypes.Values, out jarray))
+            if (!entityRecommendation.Resolution.TryGetValue(EntityResolutionTypes.Values, out object jarray))
             {
                 return null;
             }
 
-            DateTime date;
-            var isDateParsable = DateTime.TryParse(entityRecommendation.Entity, out date);
+            var isDateParsable = DateTime.TryParse(entityRecommendation.Entity, out DateTime _);
             var dates = JArray.FromObject(jarray)
                 .Select(token => DateParser.ParseDate(token["value"].ToString(), isDateParsable));
 
@@ -52,8 +50,7 @@
                 return null;
             }
 
-            object timespanString;
-            if (!entityRecommendation.Resolution.TryGetValue(EntityResolutionTypes.Duration, out timespanString))
+            if (!entityRecommendation.Resolution.TryGetValue(EntityResolutionTypes.Duration, out object timespanString))
             {
                 return null;
             }

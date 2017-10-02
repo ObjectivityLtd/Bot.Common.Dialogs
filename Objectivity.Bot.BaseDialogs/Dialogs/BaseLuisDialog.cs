@@ -37,7 +37,9 @@
 
         public bool WaitForLuisResultOnStart { get; set; }
 
+#pragma warning disable 1998
         public virtual async Task StartAsync(IDialogContext context)
+#pragma warning restore 1998
         {
             if (this.WaitForLuisResultOnStart)
             {
@@ -216,8 +218,7 @@
             if (DateParser.IsStringContainsDotsInDate(result.Query))
             {
                 var parsedQuery = DateParser.ParseDotsToDashes(result.Query);
-                bool isStaging;
-                bool.TryParse(ConfigurationManager.AppSettings.Get("Staging"), out isStaging);
+                bool.TryParse(ConfigurationManager.AppSettings.Get("Staging"), out bool isStaging);
                 LuisRequest request = new LuisRequest(parsedQuery) { Staging = isStaging };
                 List<LuisResult> results = new List<LuisResult>();
                 foreach (var luisService in this.LuisServiceProvider.GetLuisServicesForDialog(this.GetType(), context))
@@ -314,8 +315,7 @@
         private async Task HandleLuisIntent(IDialogContext context, LuisResult result)
         {
             var knownHandlers = this.EnumerateHandlers().ToDictionary(kv => kv.Key, kv => kv.Value);
-            IntentHandler handler;
-            if (!knownHandlers.TryGetValue(result.GetStrongestIntent().Intent, out handler))
+            if (!knownHandlers.TryGetValue(result.GetStrongestIntent().Intent, out IntentHandler handler))
             {
                 handler = knownHandlers[string.Empty];
             }

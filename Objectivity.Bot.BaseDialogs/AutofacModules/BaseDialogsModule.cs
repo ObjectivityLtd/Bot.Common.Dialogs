@@ -37,11 +37,10 @@
 
             builder.RegisterType<IntentsPicker>().As<IIntentsPicker>();
 
-            builder.RegisterType<QnAMakerService>().As<IQnAService>().SingleInstance().WithParameter(
-                "qnaInfo",
-                new QnAMakerAttribute(
-                    ConfigurationManager.AppSettings["QnASubscriptionKey"],
-                    ConfigurationManager.AppSettings["QnAKnowledgebaseId"]));
+            var subscriptionKey = ConfigurationManager.AppSettings["QnASubscriptionKey"];
+            var knowledgebaseId = ConfigurationManager.AppSettings["QnAKnowledgebaseId"];
+
+            builder.RegisterType<QnAMakerService>().As<IQnAService>().SingleInstance().WithParameter("qnaInfo", new QnAMakerAttribute(subscriptionKey, knowledgebaseId));
 
             builder.RegisterType<QnAMaker>().As<IQnAMaker>();
 
