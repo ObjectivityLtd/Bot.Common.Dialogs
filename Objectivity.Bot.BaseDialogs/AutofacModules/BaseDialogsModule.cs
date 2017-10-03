@@ -45,6 +45,11 @@
             builder.RegisterType<QnAMaker>().As<IQnAMaker>();
 
             builder.RegisterType<ApplicationSettings>().AsImplementedInterfaces().SingleInstance();
+
+            builder.RegisterType<IntentLogger>()
+                .Keyed<IIntentLogger>(FiberModule.Key_DoNotSerialize)
+                .AsImplementedInterfaces()
+                .SingleInstance();
         }
     }
 }

@@ -210,6 +210,13 @@
             await this.HandleLuisResultAsync(context, resultWithStrongestBestIntent);
         }
 
+        /// <summary>
+        /// Parses dates to dd/mm/yyyy format in order to enchance LUIS parsing.
+        /// </summary>
+        /// <param name="result">Luis result</param>
+        /// <param name="context">Dialog context</param>
+        /// <param name="expectedIntent">Name of the luis intent responsible for resolving dates in LUIS</param>
+        /// <returns>Luis result.</returns>
         protected async Task<LuisResult> ParseDatesAndResendIfNeeded(
             LuisResult result,
             IDialogContext context,
@@ -249,6 +256,11 @@
             await this.PostAndWaitAsync(context, JsonConvert.SerializeObject(result));
         }
 
+        /// <summary>
+        /// Redirects flow to new another with new top scoring intent.
+        /// </summary>
+        /// <param name="context">Dialog context.</param>
+        /// <param name="intent">name of new LUIS intent.</param>
         protected virtual void Redirect(IDialogContext context, string intent)
         {
             if (context == null)
@@ -261,6 +273,11 @@
             context.Done(new LuisDialogResponse<T> { ResponseType = ResponseType.RedirectWithIntent, Intent = intent });
         }
 
+        /// <summary>
+        /// Redirects flow to new another with new top scoring intent.
+        /// </summary>
+        /// <param name="context">Dialog context.</param>
+        /// <param name="result">Luis result.</param>
         protected virtual void Redirect(IDialogContext context, LuisResult result)
         {
             if (context == null)

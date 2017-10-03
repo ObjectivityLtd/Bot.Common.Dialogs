@@ -6,8 +6,18 @@
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
 
+    /// <summary>
+    /// Allws to save values into bot state.
+    /// </summary>
     public static class ContextHelper
     {
+        /// <summary>
+        /// Gets value from conversation context.
+        /// </summary>
+        /// <typeparam name="T">Type of value</typeparam>
+        /// <param name="context">The dialog context.</param>
+        /// <param name="key">Key.</param>
+        /// <returns>Value for given key.</returns>
         public static T GetValueFromContext<T>(this IDialogContext context, string key)
         {
             if (context == null)
@@ -24,6 +34,13 @@
             return result;
         }
 
+        /// <summary>
+        /// Gets value from user context.
+        /// </summary>
+        /// <typeparam name="T">Type of value</typeparam>
+        /// <param name="context">The dialog context.</param>
+        /// <param name="key">Key.</param>
+        /// <returns>Value for given key.</returns>
         public static async Task<T> GetValueFromState<T>(this IDialogContext context, string key)
         {
             if (context == null)
@@ -41,6 +58,13 @@
             }
         }
 
+        /// <summary>
+        /// Sets value into conversation context.
+        /// </summary>
+        /// <typeparam name="T">Type of value</typeparam>
+        /// <param name="context">The dialog context.</param>
+        /// <param name="key">Key.</param>
+        /// <param name="value">Value.</param>
         public static void SetValueIntoContext<T>(this IDialogContext context, string key, T value)
         {
             if (context == null)
@@ -51,6 +75,14 @@
             context.UserData.SetValue(key, value);
         }
 
+        /// <summary>
+        /// Sets value into user context.
+        /// </summary>
+        /// <typeparam name="T">Type of value</typeparam>
+        /// <param name="context">The dialog context.</param>
+        /// <param name="key">Key.</param>
+        /// <param name="value">Value.</param>
+        /// <returns>Task.</returns>
         public static async Task SetValueIntoState<T>(this IDialogContext context, string key, T value)
         {
             if (context == null)
@@ -69,6 +101,14 @@
             }
         }
 
+        /// <summary>
+        /// Gets value from conversation context.
+        /// </summary>
+        /// <typeparam name="T">Type of value</typeparam>
+        /// <param name="context">The dialog context.</param>
+        /// <param name="key">Key.</param>
+        /// <param name="value">Value retreived from context.</param>
+        /// <returns>Value for given key.</returns>
         public static bool TryGetValueFromContext<T>(this IDialogContext context, string key, out T value)
         {
             if (context == null)

@@ -19,7 +19,7 @@
 
     public class IntentPickerTests : IDisposable
     {
-        AutoResetEvent autoResetEvent = new AutoResetEvent(false);
+        readonly AutoResetEvent autoResetEvent = new AutoResetEvent(false);
 
         private bool callbackValue;
 
@@ -36,8 +36,12 @@
             var providerMock = new Mock<IIntentDescriptionProvider>();
             var loggerMock = new Mock<IIntentLogger>();
             var contextMock = new Mock<IDialogContext>();
+            var appsettingsMock = new Mock<IApplicationSettings>();
 
-            var unit = new IntentsPicker(providerMock.Object, loggerMock.Object);
+            appsettingsMock.Setup(s => s.GetSetting(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns((string s1, string s2) => s2);
+
+            var unit = new IntentsPicker(providerMock.Object, loggerMock.Object, appsettingsMock.Object);
             var result = new LuisResult()
                              {
                                  Intents =
@@ -65,7 +69,9 @@
             var providerMock = new Mock<IIntentDescriptionProvider>();
             var loggerMock = new Mock<IIntentLogger>();
             var contextMock = new Mock<IDialogContext>();
-
+            var appsettingsMock = new Mock<IApplicationSettings>();
+            appsettingsMock.Setup(s => s.GetSetting(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns((string s1, string s2) => s2);
             providerMock.Setup(provider => provider.GetDescriptions(It.IsAny<IEnumerable<string>>())).Returns(
                 () => new List<IntentDescription>
                           {
@@ -73,7 +79,7 @@
                               new IntentDescription { Intent = "B", Description = "B" }
                           });
 
-            var unit = new IntentsPicker(providerMock.Object, loggerMock.Object);
+            var unit = new IntentsPicker(providerMock.Object, loggerMock.Object, appsettingsMock.Object);
             var result = new LuisResult()
                              {
                                  Intents =

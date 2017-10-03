@@ -24,11 +24,13 @@
 
         private readonly IIntentLogger intentLogger;
 
-        private readonly double lowScoreThreshold;
+        private readonly IApplicationSettings applicationSettings;
 
-        private readonly int numberOfIntentsToConsider;
+        private double lowScoreThreshold;
 
-        private readonly double scoreDifferenceThreshold;
+        private int numberOfIntentsToConsider;
+
+        private double scoreDifferenceThreshold;
 
         private Func<IDialogContext, LuisResult, Task> handlerCallback;
 
@@ -36,19 +38,12 @@
 
         private string luisResultSerizalied;
 
-        public IntentsPicker(IIntentDescriptionProvider intentDescriptionProvider, IIntentLogger intentLogger)
+        public IntentsPicker(IIntentDescriptionProvider intentDescriptionProvider, IIntentLogger intentLogger, IApplicationSettings applicationSettings)
         {
             this.intentDescriptionProvider = intentDescriptionProvider;
             this.intentLogger = intentLogger;
-            this.numberOfIntentsToConsider = int.Parse(
-                ConfigurationManager.AppSettings["NumberOfIntentsToPickForPrompt"],
-                CultureInfo.InvariantCulture);
-            this.scoreDifferenceThreshold = double.Parse(
-                ConfigurationManager.AppSettings["IntentScoreDifferenceThreshold"],
-                CultureInfo.InvariantCulture);
-            this.lowScoreThreshold = double.Parse(
-                ConfigurationManager.AppSettings["IntentLowScoreThreshold"],
-                CultureInfo.InvariantCulture);
+            this.applicationSettings = applicationSettings;
+            this.GetThresholdsFromWebConfig();
         }
 
         public async Task PickCorrectIntent(
@@ -106,6 +101,19 @@
                 this.intentDescriptions.Single(s => s.Description.Equals(chosenDescription)).Intent);
 
             await this.handlerCallback(context, newResult);
+        }
+
+        private void GetThresholdsFromWebConfig()
+        {
+            this.numberOfIntentsToConsider = int.Parse(
+                this.applicationSettings.GetSetting("NumberOfIntentsToPickForPrompt", "2"),
+                CultureInfo.InvariantCulture);
+            this.scoreDifferenceThreshold = double.Parse(
+                this.applicationSettings.GetSetting("IntentScoreDifferenceThreshold", "0.15"),
+                CultureInfo.InvariantCulture);
+            this.lowScoreThreshold = double.Parse(
+                this.applicationSettings.GetSetting("IntentLowScoreThreshold", "0.4"),
+                CultureInfo.InvariantCulture);
         }
     }
 }
