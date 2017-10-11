@@ -7,20 +7,16 @@
     using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
-
+    using LuisApp;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Dialogs.Internals;
     using Microsoft.Bot.Builder.Luis;
     using Microsoft.Bot.Builder.Luis.Models;
     using Microsoft.Bot.Connector;
-
     using Newtonsoft.Json;
-
     using NLog;
-
-    using Objectivity.Bot.BaseDialogs.LuisApp;
-    using Objectivity.Bot.BaseDialogs.Services;
-    using Objectivity.Bot.BaseDialogs.Utils;
+    using Services;
+    using Utils;
 
     [Serializable]
     public abstract class BaseLuisDialog<T> : IDialog<ILuisDialogResponse<T>>
@@ -185,6 +181,11 @@
 
         protected virtual async Task MessageReceived(IDialogContext context, IAwaitable<IMessageActivity> item)
         {
+            if (this.LuisServiceProvider == null)
+            {
+                throw new NullReferenceException("LuisServiceProvider needs to be registered");
+            }
+
             var message = await item;
             var messageText = message.Text;
 
@@ -226,8 +227,8 @@
             {
                 var parsedQuery = DateParser.ParseDotsToDashes(result.Query);
                 bool.TryParse(ConfigurationManager.AppSettings.Get("Staging"), out bool isStaging);
-                LuisRequest request = new LuisRequest(parsedQuery) { Staging = isStaging };
-                List<LuisResult> results = new List<LuisResult>();
+                var request = new LuisRequest(parsedQuery) { Staging = isStaging };
+                var results = new List<LuisResult>();
                 foreach (var luisService in this.LuisServiceProvider.GetLuisServicesForDialog(this.GetType(), context))
                 {
                     results.Add(await luisService.QueryAsync(request, CancellationToken.None));
@@ -308,6 +309,10 @@
                 case ResponseType.RedirectWithIntent:
                     this.Redirect(context, dialogResponse.Intent);
                     return true;
+                case ResponseType.Regular:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
             return false;

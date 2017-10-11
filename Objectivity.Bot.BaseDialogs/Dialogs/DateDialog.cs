@@ -3,11 +3,9 @@
     using System;
     using System.Linq;
     using System.Threading.Tasks;
-
+    using LuisApp;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Luis.Models;
-
-    using Objectivity.Bot.BaseDialogs.LuisApp;
 
     [Serializable]
     public class DateDialog : PromptValueDialog<DateTime?>
