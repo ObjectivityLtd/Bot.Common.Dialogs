@@ -5,12 +5,10 @@
     using Autofac;
     using Autofac.Core;
 
-    using NLog;
+    using Objectivity.Bot.BaseDialogs.Utils;
 
     public class DialogFactory : IDialogFactory
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         private readonly IComponentContext ctx;
 
         public DialogFactory(IComponentContext ctx)
@@ -26,7 +24,7 @@
             }
             catch (Exception ex)
             {
-                Logger.Error(ex);
+                ex.TraceError();
                 throw;
             }
         }

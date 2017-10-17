@@ -11,15 +11,11 @@ namespace Objectivity.Bot.BaseDialogs.Utils
     using Microsoft.Bot.Builder.Internals.Fibers;
     using Microsoft.Bot.Connector;
 
-    using NLog;
-
     /// <summary>
     /// This is a copy of a class from Bot.Builder project which is sealed. When they will change it we should inherit from their implementation.
     /// </summary>
     public sealed class CustomPostUnhandledExceptionToUser : IPostToBot
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         private readonly IBotToUser botToUser;
 
         private readonly IPostToBot inner;
@@ -57,12 +53,11 @@ namespace Objectivity.Bot.BaseDialogs.Utils
                         await this.botToUser.PostAsync(Messages.CodeError, cancellationToken: token);
                     }
 
-                    Logger.Fatal("message: " + ((Activity)activity).Text + "\n" + error);
+                    Trace.TraceError("message: " + ((Activity)activity).Text + "\n" + error);
                 }
                 catch (Exception inner)
                 {
-                    this.trace.WriteLine(inner);
-                    Logger.Fatal(inner);
+                    inner.TraceError();
                 }
 
                 throw;

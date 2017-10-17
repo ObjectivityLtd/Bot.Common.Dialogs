@@ -2,7 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Configuration;
+    using System.Diagnostics;
     using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
@@ -10,16 +10,12 @@
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Luis.Models;
 
-    using NLog;
-
     using Objectivity.Bot.BaseDialogs.AutofacModules;
     using Objectivity.Bot.BaseDialogs.LuisApp;
 
     [Serializable]
     public class IntentsPicker : IIntentsPicker
     {
-        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
-
         private readonly IIntentDescriptionProvider intentDescriptionProvider;
 
         private readonly IIntentLogger intentLogger;
@@ -73,7 +69,7 @@
 
                 if (this.intentDescriptions.Count() < intentsToCheck.Count)
                 {
-                    Logger.Fatal(string.Concat(Messages.Log_SimillarIntents, string.Join(", ", intentsToCheck)));
+                    Trace.TraceError(string.Concat(Messages.Log_SimillarIntents, string.Join(", ", intentsToCheck)));
 
                     await this.handlerCallback(context, result);
                     return;
