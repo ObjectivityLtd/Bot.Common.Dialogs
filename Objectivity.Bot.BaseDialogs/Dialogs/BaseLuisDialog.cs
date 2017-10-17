@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Configuration;
+    using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
     using System.Threading;
@@ -14,15 +15,12 @@
     using Microsoft.Bot.Builder.Luis.Models;
     using Microsoft.Bot.Connector;
     using Newtonsoft.Json;
-    using NLog;
     using Services;
     using Utils;
 
     [Serializable]
     public abstract class BaseLuisDialog<T> : IDialog<ILuisDialogResponse<T>>
     {
-        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
-
         public IDialogFactory DialogFactory { get; set; }
 
         public IIntentsPicker IntentsPicker { get; set; }
@@ -86,8 +84,7 @@
             if (context == null)
             {
                 var ex = new ArgumentNullException(nameof(context));
-                Logger.Error(ex);
-                throw ex;
+                ex.TraceError();
             }
 
             context.Done(new LuisDialogResponse<T> { ResponseType = ResponseType.Regular, Response = response });
@@ -117,7 +114,7 @@
                 }
                 catch (ArgumentException)
                 {
-                    Logger.Error(
+                    Trace.TraceError(
                         $"Cannot bind to the target method {method.Name} because its signature or security transparency is not compatible with that of the delegate type.");
                 }
 
@@ -172,7 +169,7 @@
             catch (Exception e)
             {
                 var activity = context.Activity as Activity;
-                Logger.Fatal($"message: {activity?.Text} \n {e}");
+                Trace.TraceError($"message: {activity?.Text} \n {e}");
 
                 await context.PostAsync(Messages.CodeError);
                 context.Wait(this.MessageReceived);
@@ -267,7 +264,7 @@
             if (context == null)
             {
                 var ex = new ArgumentNullException(nameof(context));
-                Logger.Error(ex);
+                ex.TraceError();
                 throw ex;
             }
 
@@ -284,7 +281,7 @@
             if (context == null)
             {
                 var ex = new ArgumentNullException(nameof(context));
-                Logger.Error(ex);
+                ex.TraceError();
                 throw ex;
             }
 
@@ -349,7 +346,7 @@
             else
             {
                 var ex = new Exception("No default intent handler found.");
-                Logger.Error(ex, ex.Message);
+                ex.TraceError();
                 throw ex;
             }
         }

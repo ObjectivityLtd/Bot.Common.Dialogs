@@ -1,16 +1,13 @@
 ﻿namespace Objectivity.Bot.BaseDialogs.Utils
 {
     using System;
+    using System.Diagnostics;
     using System.Linq;
 
     using Microsoft.Bot.Builder.Luis.Models;
 
-    using NLog;
-
     public class IntentLogger : IIntentLogger
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         public static void LogLuisResult(LuisResult result, int maxIntents, string comment)
         {
             if (result == null)
@@ -34,11 +31,11 @@
                 default:
                     entityText =
                         $" Entities {string.Join(", ", result.Entities.Select(e => $"'{e.Entity}' (score {e.Score}, type {e.Type})"))}";
-                    Logger.Warn("More than one entity!");
+                    Trace.TraceWarning("More than one entity!");
                     break;
             }
 
-            Logger.Debug($"{intentText}{entityText} recognized for text '{result.Query}' comment: {comment}");
+            Trace.TraceInformation($"{intentText}{entityText} recognized for text '{result.Query}' comment: {comment}");
         }
 
         void IIntentLogger.LogLuisResult(LuisResult result, int maxIntentsToDescribe, string comment)

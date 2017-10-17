@@ -1,20 +1,17 @@
 ﻿namespace Objectivity.Bot.BaseDialogs.Utils
 {
     using System;
+    using System.Diagnostics;
     using System.Linq;
 
     using Microsoft.Bot.Builder.Luis.Models;
 
     using Newtonsoft.Json;
 
-    using NLog;
-
     using Objectivity.Bot.BaseDialogs.LuisApp;
 
     public static class LuisResultExtensions
     {
-        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
-
         public static LuisResult CopySettingNewIntent(this LuisResult luisResult, string intent, double score = 1)
         {
             var copiedLuisResult = luisResult.ToJson().ToLuisResult();
@@ -36,7 +33,7 @@
             var intent = result.TopScoringIntent ?? result.Intents?.FirstOrDefault();
             if (intent == null)
             {
-                Logger.Warn("Neither TopScoringIntent nor Intents set.");
+                Trace.TraceWarning("Neither TopScoringIntent nor Intents set.");
                 return new IntentRecommendation { Intent = Intents.None, Score = 1.0 };
             }
 
