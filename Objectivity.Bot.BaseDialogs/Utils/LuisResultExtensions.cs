@@ -2,14 +2,10 @@
 {
     using System;
     using System.Linq;
-
+    using LuisApp;
     using Microsoft.Bot.Builder.Luis.Models;
-
     using Newtonsoft.Json;
-
     using NLog;
-
-    using Objectivity.Bot.BaseDialogs.LuisApp;
 
     public static class LuisResultExtensions
     {

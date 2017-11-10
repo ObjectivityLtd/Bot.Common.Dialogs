@@ -312,7 +312,7 @@
                 case ResponseType.Regular:
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException(nameof(dialogResponse));
             }
 
             return false;

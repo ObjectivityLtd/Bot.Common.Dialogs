@@ -1,18 +1,18 @@
 ﻿namespace Objectivity.Bot.BaseDialogs.Utils
 {
+    using System.Collections.Generic;
     using System.Configuration;
+    using System.Globalization;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-
+    using Dialogs;
+    using LuisApp;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Luis;
     using Microsoft.Bot.Builder.Luis.Models;
     using Microsoft.Bot.Connector;
-
-    using Objectivity.Bot.BaseDialogs.Dialogs;
-    using Objectivity.Bot.BaseDialogs.LuisApp;
-    using Objectivity.Bot.BaseDialogs.Services;
+    using Services;
 
     public class SkippableDialogForwarder
     {
@@ -26,8 +26,7 @@
             this.luisServiceProvider = luisServiceProvider;
         }
 
-        private static double MinimalReasonableIntentScroing => double.Parse(
-            ConfigurationManager.AppSettings.Get("SkippableIntentScoringTreshold"));
+        private static double MinimalReasonableIntentScroing => double.Parse(ConfigurationManager.AppSettings.Get("SkippableIntentScoringTreshold"), CultureInfo.InvariantCulture);
 
         public async Task<bool> TryToForward(IDialogContext context, IMessageActivity messageActivity)
         {
@@ -53,7 +52,7 @@
                     }).ToArray();
         }
 
-        private async Task<bool> TryToForward(IDialogContext context, LuisResult[] luisResults)
+        private async Task<bool> TryToForward(IDialogContext context, IEnumerable<LuisResult> luisResults)
         {
             LuisResult luisResult = luisResults?.FirstOrDefault(
                 lr => lr != null && lr.TopScoringIntent.Score > MinimalReasonableIntentScroing

@@ -23,7 +23,7 @@
             // "XXXX-30-09" - "september 30th",
             if (RegexHelper.GetRegex(EnumRegexTypes.MonthAndDayMatch).IsMatch(dateValue))
             {
-                return ParseDate(dateValue.Replace("XXXX", today.Year.ToString()), isParsable);
+                return ParseDate(dateValue.Replace("XXXX", today.Year.ToString(CultureInfo.CurrentCulture)), isParsable);
             }
 
             // "2015-09-30"

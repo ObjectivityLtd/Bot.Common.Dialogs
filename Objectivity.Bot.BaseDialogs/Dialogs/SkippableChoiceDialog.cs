@@ -3,12 +3,10 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
-
-    using Objectivity.Bot.BaseDialogs.Services;
-    using Objectivity.Bot.BaseDialogs.Utils;
+    using Services;
+    using Utils;
 
     [Serializable]
     public class SkippableChoiceDialog<T> : PromptDialog.PromptChoice<T>
@@ -120,8 +118,7 @@
 
         protected override async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> message)
         {
-            T result;
-            if (this.TryParse(await message, out result))
+            if (this.TryParse(await message, out _))
             {
                 await base.MessageReceivedAsync(context, message);
             }

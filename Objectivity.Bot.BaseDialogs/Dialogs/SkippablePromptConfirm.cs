@@ -2,12 +2,10 @@
 {
     using System;
     using System.Threading.Tasks;
-
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Connector;
-
-    using Objectivity.Bot.BaseDialogs.Services;
-    using Objectivity.Bot.BaseDialogs.Utils;
+    using Services;
+    using Utils;
 
     [Serializable]
     public class SkippablePromptConfirm : PromptDialog.PromptConfirm
@@ -72,9 +70,8 @@
 
         protected override async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> message)
         {
-            bool result;
             var messageActivity = await message;
-            var tryParse = this.TryParse(messageActivity, out result);
+            var tryParse = this.TryParse(messageActivity, out _);
 
             if (tryParse)
             {

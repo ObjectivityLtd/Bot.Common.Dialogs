@@ -1,31 +1,26 @@
 ﻿namespace Objectivity.Bot.BaseDialogs.Tests
 {
+    using AutofacModules;
+    using FluentAssertions;
+    using Microsoft.Bot.Builder.Dialogs;
+    using Microsoft.Bot.Builder.Luis.Models;
+    using Moq;
     using System;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-
-    using FluentAssertions;
-
-    using Microsoft.Bot.Builder.Dialogs;
-    using Microsoft.Bot.Builder.Luis.Models;
-
-    using Moq;
-
-    using Objectivity.Bot.BaseDialogs.AutofacModules;
-    using Objectivity.Bot.BaseDialogs.Utils;
-
+    using Utils;
     using Xunit;
 
     public class IntentPickerTests : IDisposable
     {
-        readonly AutoResetEvent autoResetEvent = new AutoResetEvent(false);
+        private readonly AutoResetEvent autoResetEvent = new AutoResetEvent(false);
 
         private bool callbackValue;
 
         public void Dispose()
         {
-            Dispose(true);
+            this.Dispose(true);
             GC.SuppressFinalize(this);
         }
 
@@ -42,19 +37,14 @@
                 .Returns((string s1, string s2) => s2);
 
             var unit = new IntentsPicker(providerMock.Object, loggerMock.Object, appsettingsMock.Object);
-            var result = new LuisResult()
-                             {
-                                 Intents =
-                                     new List<IntentRecommendation>()
-                                         {
-                                             new IntentRecommendation(
-                                                 "A",
-                                                 0.55),
-                                             new IntentRecommendation(
-                                                 "B",
-                                                 0.44)
-                                         }
-                             };
+            var result = new LuisResult
+            {
+                Intents = new List<IntentRecommendation>
+                {
+                    new IntentRecommendation("A", 0.55),
+                    new IntentRecommendation("B", 0.44)
+                }
+            };
 
             await unit.PickCorrectIntent(contextMock.Object, result, this.CallbackAction);
             this.autoResetEvent.WaitOne(500);
@@ -80,19 +70,14 @@
                           });
 
             var unit = new IntentsPicker(providerMock.Object, loggerMock.Object, appsettingsMock.Object);
-            var result = new LuisResult()
-                             {
-                                 Intents =
-                                     new List<IntentRecommendation>
-                                         {
-                                             new IntentRecommendation(
-                                                 "A",
-                                                 0.55),
-                                             new IntentRecommendation(
-                                                 "B",
-                                                 0.54)
-                                         }
-                             };
+            var result = new LuisResult
+            {
+                Intents = new List<IntentRecommendation>
+                {
+                    new IntentRecommendation("A", 0.55),
+                    new IntentRecommendation("B", 0.54)
+                }
+            };
 
             // act
             await unit.PickCorrectIntent(contextMock.Object, result, this.CallbackAction);

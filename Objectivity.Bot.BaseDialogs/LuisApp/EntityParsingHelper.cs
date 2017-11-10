@@ -1,15 +1,13 @@
 ﻿namespace Objectivity.Bot.BaseDialogs.LuisApp
 {
     using System;
+    using System.Globalization;
     using System.Linq;
     using System.Text.RegularExpressions;
     using System.Xml;
-
     using Microsoft.Bot.Builder.Luis.Models;
-
     using Newtonsoft.Json.Linq;
-
-    using Objectivity.Bot.BaseDialogs.Utils;
+    using Utils;
 
     public static class EntityParsingHelper
     {
@@ -60,7 +58,7 @@
                 var match = Regex.Match(timespanString.ToString(), @"^P(?<weeksNumber>\d+)W$");
                 if (match.Success)
                 {
-                    var weeksNumber = int.Parse(match.Groups["weeksNumber"].Value);
+                    var weeksNumber = int.Parse(match.Groups["weeksNumber"].Value, CultureInfo.CurrentCulture);
                     return TimeSpan.FromDays(weeksNumber * 7);
                 }
 

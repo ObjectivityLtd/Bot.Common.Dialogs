@@ -1,6 +1,7 @@
 ﻿namespace Objectivity.Bot.BaseDialogs.Dialogs
 {
     using System;
+    using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
     using LuisApp;
@@ -14,10 +15,10 @@
 
         public DateDialog(string promptMessage = null, string unrecognisedAnswerMessage = null)
         {
-            var specifyRequest = string.Format(Messages.SpecifyParameter, ParameterName);
+            var specifyRequest = string.Format(CultureInfo.InvariantCulture, Messages.SpecifyParameter, ParameterName);
             this.PromptMessage = promptMessage ?? specifyRequest;
             this.UnrecognizedAnswerMessage = unrecognisedAnswerMessage
-                                             ?? $"{Messages.DidNotUnderstand} {specifyRequest}";
+                ?? string.Format(CultureInfo.InvariantCulture, "{0} {1}", Messages.DidNotUnderstand, specifyRequest);
         }
 
         [LuisIntent(Intents.GetDate)]

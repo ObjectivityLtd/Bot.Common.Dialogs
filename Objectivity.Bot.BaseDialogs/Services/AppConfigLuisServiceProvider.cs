@@ -18,8 +18,7 @@
 
         public IEnumerable<ILuisService> GetLuisServicesForDialog(Type dialogType, IDialogContext dialogContext)
         {
-            bool isStaging;
-            bool.TryParse(ConfigurationManager.AppSettings.Get("Staging"), out isStaging);
+            bool.TryParse(ConfigurationManager.AppSettings.Get("Staging"), out var isStaging);
             return (ConfigurationManager.GetSection("LuisServices") as Hashtable)?.Cast<DictionaryEntry>()
                 .ToDictionary(n => n.Key.ToString(), n => n.Value.ToString()).Select(
                     kvp => new LuisService(

@@ -1,18 +1,12 @@
 ﻿namespace Objectivity.Bot.BaseDialogs.AutofacModules
 {
-    using System.Configuration;
     using System.Linq;
-
     using Autofac;
-
-    using Microsoft.Bot.Builder.CognitiveServices.QnAMaker;
+    using Dialogs;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Internals.Fibers;
-
-    using Objectivity.Bot.BaseDialogs.Dialogs;
-    using Objectivity.Bot.BaseDialogs.QnA;
-    using Objectivity.Bot.BaseDialogs.Services;
-    using Objectivity.Bot.BaseDialogs.Utils;
+    using Services;
+    using Utils;
 
     public class BaseDialogsModule : Module
     {

@@ -1,10 +1,8 @@
 ﻿namespace Objectivity.Bot.BaseDialogs.Dialogs
 {
     using System;
-
     using Autofac;
     using Autofac.Core;
-
     using NLog;
 
     public class DialogFactory : IDialogFactory

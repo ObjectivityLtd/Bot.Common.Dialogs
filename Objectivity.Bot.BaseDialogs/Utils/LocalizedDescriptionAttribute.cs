@@ -2,13 +2,10 @@
 {
     using System;
     using System.ComponentModel;
+    using System.Globalization;
     using System.Resources;
 
     [AttributeUsage(AttributeTargets.All)]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(
-        "Microsoft.Design",
-        "CA1019:DefineAccessorsForAttributeArguments",
-        Justification = "This is attribute class, there is no need for properties")]
     public class LocalizedDescriptionAttribute : DescriptionAttribute
     {
         private readonly ResourceManager resource;
@@ -27,7 +24,7 @@
             {
                 string displayName = this.resource.GetString(this.resourceKey);
 
-                return string.IsNullOrEmpty(displayName) ? $"[[{this.resourceKey}]]" : displayName;
+                return string.IsNullOrEmpty(displayName) ? string.Format(CultureInfo.CurrentCulture, "[[{0}]]", this.resourceKey) : displayName;
             }
         }
     }

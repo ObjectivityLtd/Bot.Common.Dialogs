@@ -2,18 +2,14 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Configuration;
     using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
-
+    using AutofacModules;
+    using LuisApp;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Luis.Models;
-
     using NLog;
-
-    using Objectivity.Bot.BaseDialogs.AutofacModules;
-    using Objectivity.Bot.BaseDialogs.LuisApp;
 
     [Serializable]
     public class IntentsPicker : IIntentsPicker

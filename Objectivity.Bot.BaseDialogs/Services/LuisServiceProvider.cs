@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
 
     using Microsoft.Bot.Builder.Dialogs;
@@ -30,7 +31,7 @@
 
             if (!dialogType.IsAssignableFrom(typeof(IDialog)))
             {
-                throw new ArgumentException($"{dialogType.Name} type does not implement IDialog");
+                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "{0} type does not implement IDialog", dialogType.Name));
             }
 
             var luisModels = this.luisModelProvider.GetLuisModelsForDialog(dialogType);

@@ -2,13 +2,11 @@
 {
     using System;
     using System.Threading.Tasks;
-
+    using LuisApp;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Luis.Models;
-
-    using Objectivity.Bot.BaseDialogs.LuisApp;
-    using Objectivity.Bot.BaseDialogs.Services;
-    using Objectivity.Bot.BaseDialogs.Utils;
+    using Services;
+    using Utils;
 
     [Serializable]
     public class SkippableDateDialog : DateDialog
