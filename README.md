@@ -1,4 +1,5 @@
 # Bot.Common.Dialogs
+[![Build status](https://ci.appveyor.com/api/projects/status/02mi9wwval2610xd?svg=true)](https://ci.appveyor.com/project/ObjectivityAdminsTeam/bot-common-dialogs)
 
 Objectivity's wrapper around base classes from  [Bot framework](https://dev.botframework.com/). This package allows user to separate from Microsoft's implementation of BaseLuisDialog. It also contains useful toolset which helps during bot development.
 # Note
@@ -18,7 +19,8 @@ Feature                                                                |Class|De
 ---                                                                     | ---  | ---
 Dialog Factory| DialogFactory.cs| Class helps with dialog creation thorugh Autofac together with dependencies             | 
 Date dialog| DateDialog.cs    | Ready to use dialog which asks user for a date and use parser and LUIS to get proper value                    
-Skippable dialogs|SkippableChoiceDialog.cs  SkippablePromptConfirm.cs SkippableDateDialog.cs | Skippable prompts which allow user to skip answer for bot's question
+Skippable dialogs|SkippableChoiceDialog.cs  SkippablePromptConfirm.cs SkippableDateDialog.cs  | Skippable prompts which allow user to skip answer for bot's question
+LuisPrompt| LuisPrompt.cs   |A mixture of choice and confirm prompt. Capable of detecting not only Yes/No responses but also several others using LUIS service | 
 QnA Maker wrapper| QnAMaker.cs   |Wrapper around [QnaMaker](https://qnamaker.ai/) classes             | 
 Seting and retrieving values from bot state [(details)](#contextHelper) | ContextHelper.cs   |Helper class which allow to set given key value pair into bot state so it can be retrieved during conversation| 
 Handle picking right intents [(details)](#intentPicker)| BaseLuisDialog.cs, IntentsPicker   |Handle results from LUIS, if there are 2 simillar intents, user will be prompted which one should be used|

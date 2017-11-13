@@ -1,4 +1,5 @@
-﻿namespace Objectivity.Bot.BaseDialogs.Dialogs
+﻿// ReSharper disable All
+namespace Objectivity.Bot.BaseDialogs.Dialogs
 {
     using System;
     using System.Collections.Generic;
