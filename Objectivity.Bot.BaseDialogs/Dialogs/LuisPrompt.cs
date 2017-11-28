@@ -99,6 +99,24 @@
         {
             var response = await argument;
 
+            var luisresult = await this.QueryLuis(response.Text, context.CancellationToken);
+            var isUnkownReponse =
+                string.IsNullOrEmpty(luisresult.TopScoringIntent.Intent) ||
+                !this.luisIntents?.Contains(luisresult.TopScoringIntent.Intent) == true;
+            if (isUnkownReponse)
+            {
+                await this.UseRegularPrompt(context, response);
+            }
+            else
+            {
+                context.Done(new LuisPromptResult { ResultType = LuisPromptResultType.LuisResult, LuisResult = luisresult });
+            }
+
+
+        }
+
+        private async Task UseRegularPrompt(IDialogContext context, IMessageActivity response)
+        {
             var entity = this.recognizer.RecognizeEntity(response);
 
             if (entity.HasValue)
@@ -107,24 +125,7 @@
             }
             else
             {
-                await this.HandleUnrecognizedEntity(context, response);
-            }
-        }
-
-        private async Task HandleUnrecognizedEntity(IDialogContext context, IMessageActivity response)
-        {
-            var luisresult = await this.QueryLuis(response.Text, context.CancellationToken);
-            var isUnkownReponse =
-                string.IsNullOrEmpty(luisresult.TopScoringIntent.Intent) ||
-                !this.luisIntents?.Contains(luisresult.TopScoringIntent.Intent) == true;
-
-            if (isUnkownReponse)
-            {
                 await this.HandleRetry(context);
-            }
-            else
-            {
-                context.Done(new LuisPromptResult { ResultType = LuisPromptResultType.LuisResult, LuisResult = luisresult });
             }
         }
 
