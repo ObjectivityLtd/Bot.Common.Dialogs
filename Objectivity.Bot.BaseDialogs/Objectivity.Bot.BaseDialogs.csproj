@@ -104,6 +104,7 @@
     <Compile Include="Dialogs\LuisPromptResultType.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Utils\ApplicationSettings.cs" />
+    <Compile Include="Utils\BooleanRecognizer.cs" />
     <Compile Include="Utils\ContextHelper.cs" />
     <Compile Include="Utils\CustomPostUnhandledExceptionToUser.cs" />
     <Compile Include="Dialogs\DialogFactory.cs" />

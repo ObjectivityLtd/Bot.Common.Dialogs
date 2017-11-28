@@ -131,6 +131,7 @@
   <ItemGroup>
     <Compile Include="DateParserTests.cs" />
     <Compile Include="IntentPickerTests.cs" />
+    <Compile Include="BooleanRecognizerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
