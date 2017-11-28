@@ -111,8 +111,6 @@
             {
                 context.Done(new LuisPromptResult { ResultType = LuisPromptResultType.LuisResult, LuisResult = luisresult });
             }
-
-
         }
 
         private async Task UseRegularPrompt(IDialogContext context, IMessageActivity response)
@@ -141,7 +139,7 @@
             else
             {
                 await context.PostAsync(Microsoft.Bot.Builder.Resource.Resources.TooManyAttempts);
-                context.Done(new LuisPromptResult {ResultType = LuisPromptResultType.TooManyAttempts});
+                context.Done(new LuisPromptResult { ResultType = LuisPromptResultType.TooManyAttempts });
             }
         }
     }

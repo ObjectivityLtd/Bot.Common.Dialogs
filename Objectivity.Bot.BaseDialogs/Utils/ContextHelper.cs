@@ -25,13 +25,9 @@
                 throw new ArgumentNullException(nameof(context));
             }
 
-            T result;
-            if (!context.UserData.TryGetValue(key, out result))
-            {
-                return default(T);
-            }
-
-            return result;
+            return !context.UserData.TryGetValue(key, out T result)
+                ? default(T)
+                : result;
         }
 
         /// <summary>
@@ -48,6 +44,8 @@
                 throw new ArgumentNullException(nameof(context));
             }
 
+            // TODO: error CS0618: 'StateClient' is obsolete: 'The StateAPI is being deprecated.  Please refer to https://aka.ms/yr235k for details on how to replace with your own storage.'
+#pragma warning disable CS0618 // Type or member is obsolete
             using (StateClient stateClient = context.Activity.GetStateClient())
             {
                 IBotState chatbotState = stateClient.BotState;
@@ -56,6 +54,7 @@
 
                 return chatbotData.GetProperty<T>(key);
             }
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         /// <summary>
@@ -90,6 +89,9 @@
                 throw new ArgumentNullException(nameof(context));
             }
 
+            // TODO: error CS0618: 'StateClient' is obsolete: 'The StateAPI is being deprecated.  Please refer to https://aka.ms/yr235k for details on how to replace with your own storage.'
+#pragma warning disable CS0618 // Type or member is obsolete
+
             using (StateClient stateClient = context.Activity.GetStateClient())
             {
                 IBotState chatbotState = stateClient.BotState;
@@ -98,6 +100,7 @@
 
                 chatbotData.SetProperty(key, value);
                 await chatbotState.SetUserDataAsync(context.Activity.ChannelId, context.Activity.From.Id, chatbotData);
+#pragma warning restore CS0618 // Type or member is obsolete
             }
         }
 
@@ -116,12 +119,7 @@
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if (context.UserData.TryGetValue(key, out value))
-            {
-                return true;
-            }
-
-            return false;
+            return context.UserData.TryGetValue(key, out value);
         }
     }
 }
