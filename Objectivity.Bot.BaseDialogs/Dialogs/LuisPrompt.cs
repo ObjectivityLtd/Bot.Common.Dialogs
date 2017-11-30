@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using LuisApp;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Luis;
     using Microsoft.Bot.Builder.Luis.Models;
@@ -102,6 +103,7 @@
             var luisresult = await this.QueryLuis(response.Text, context.CancellationToken);
             var isUnkownReponse =
                 string.IsNullOrEmpty(luisresult.TopScoringIntent.Intent) ||
+                luisresult.TopScoringIntent.Intent == Intents.None ||
                 !this.luisIntents?.Contains(luisresult.TopScoringIntent.Intent) == true;
             if (isUnkownReponse)
             {
