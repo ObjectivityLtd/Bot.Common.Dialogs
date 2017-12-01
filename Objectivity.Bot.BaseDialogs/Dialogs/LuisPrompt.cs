@@ -25,7 +25,6 @@
         private readonly string prompt;
         private readonly string[] luisIntents;
         private readonly string retry;
-        [NonSerialized]
         private readonly BooleanRecognizer recognizer;
 
         /// <summary>

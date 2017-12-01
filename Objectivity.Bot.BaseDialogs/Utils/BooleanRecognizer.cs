@@ -1,5 +1,6 @@
 ﻿namespace Objectivity.Bot.BaseDialogs.Utils
 {
+    using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
@@ -7,6 +8,7 @@
     using Microsoft.Bot.Builder.Dialogs.Internals;
     using Microsoft.Bot.Connector;
 
+    [Serializable]
     public class BooleanRecognizer
     {
         private readonly string[][] patterns;
