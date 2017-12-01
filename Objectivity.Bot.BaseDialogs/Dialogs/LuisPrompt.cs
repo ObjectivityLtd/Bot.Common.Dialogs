@@ -16,6 +16,7 @@
     /// <summary>
     /// Equivalent of <see cref="PromptDialog.PromptConfirm"/> but allowing more than yes/no responses
     /// </summary>
+    [Serializable]
     public class LuisPrompt : IDialog<LuisPromptResult>
     {
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
@@ -24,7 +25,17 @@
         private readonly string prompt;
         private readonly string[] luisIntents;
         private readonly string retry;
+        [NonSerialized]
         private readonly BooleanRecognizer recognizer;
+
+        /// <summary>
+        /// What to display when user didn't say a valid response after <see cref="attempts"/>.
+        /// </summary>
+        private readonly string tooManyAttempts;
+
+        /// <summary>
+        /// Maximum number of attempts.
+        /// </summary>
         private int attempts;
 
         /// <summary>
@@ -36,7 +47,8 @@
         /// <param name="retry">What to show on retry.</param>
         /// <param name="luisIntents"></param>
         /// <param name="patterns">Yes and no alternatives for matching input where first dimension is either <see cref="PromptDialog.PromptConfirm.Yes"/> or <see cref="PromptDialog.PromptConfirm.No"/> and the arrays are alternative strings to match.</param>
-        private LuisPrompt(ILuisService luisService, string prompt, int attempts, string retry = null, string[] luisIntents = null, string[][] patterns = null)
+        /// <param name="tooManyAttempts">What to display when user didn't say a valid response after <see cref="attempts"/>.</param>
+        private LuisPrompt(ILuisService luisService, string prompt, int attempts, string retry = null, string[] luisIntents = null, string[][] patterns = null, string tooManyAttempts = null)
         {
             this.luisService = luisService;
             this.prompt = prompt;
@@ -44,6 +56,7 @@
             this.retry = retry ?? new PromptDialog.PromptConfirm(this.prompt, this.retry, this.attempts).DefaultRetry; //just to steal retry message;
             this.luisIntents = luisIntents;
             this.recognizer = new BooleanRecognizer(patterns);
+            this.tooManyAttempts = tooManyAttempts ?? Microsoft.Bot.Builder.Resource.Resources.TooManyAttempts;
         }
 
         /// <summary>
@@ -57,6 +70,7 @@
         /// <param name="retry">What to display on retry.</param>
         /// <param name="luisIntents"></param>
         /// <param name="patterns">Yes and no alternatives for matching input where first dimension is either <see cref="PromptDialog.PromptConfirm.Yes"/> or <see cref="PromptDialog.PromptConfirm.No"/> and the arrays are alternative strings to match.</param>
+        /// <param name="tooManyAttempts">What to display when user didn't say a valid response after <see cref="attempts"/>.</param>
         public static void Confirm(
             ILuisService luisService,
             IDialogContext context,
@@ -65,14 +79,15 @@
             int attempts = 3,
             string retry = null,
             string[] luisIntents = null,
-            string[][] patterns = null)
+            string[][] patterns = null,
+            string tooManyAttempts = null)
         {
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var child = new LuisPrompt(luisService, prompt, attempts, retry, luisIntents, patterns);
+            var child = new LuisPrompt(luisService, prompt, attempts, retry, luisIntents, patterns, tooManyAttempts);
             context.Call(child, resume);
         }
 
@@ -131,16 +146,14 @@
 
         private async Task HandleRetry(IDialogContext context)
         {
-            this.attempts--;
-
-            if (this.attempts > 0)
+            if (this.attempts-- > 0)
             {
                 await context.PostAsync(this.retry);
                 context.Wait(this.GotResponse);
             }
             else
             {
-                await context.PostAsync(Microsoft.Bot.Builder.Resource.Resources.TooManyAttempts);
+                await context.PostAsync(this.tooManyAttempts);
                 context.Done(new LuisPromptResult { ResultType = LuisPromptResultType.TooManyAttempts });
             }
         }
