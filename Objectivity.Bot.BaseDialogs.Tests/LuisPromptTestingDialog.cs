@@ -33,6 +33,7 @@
             {
                 await context.PostAsync($"Returned: {response.ResultType}");
             }
+
             context.Done<object>(null);
         }
     }

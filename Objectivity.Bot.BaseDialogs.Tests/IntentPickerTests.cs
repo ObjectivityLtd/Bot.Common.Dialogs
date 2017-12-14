@@ -1,14 +1,14 @@
 ﻿namespace Objectivity.Bot.BaseDialogs.Tests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
     using AutofacModules;
     using FluentAssertions;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Luis.Models;
     using Moq;
-    using System;
-    using System.Collections.Generic;
-    using System.Threading;
-    using System.Threading.Tasks;
     using Utils;
     using Xunit;
 

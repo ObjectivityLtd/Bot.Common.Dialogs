@@ -99,8 +99,8 @@
     <Reference Include="Objectivity.Bot.HtmlBuild, Version=0.0.38.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Objectivity.Bot.HtmlBuilder.1.0.1\lib\net461\Objectivity.Bot.HtmlBuild.dll</HintPath>
     </Reference>
-    <Reference Include="Objectivity.Bot.Tests.Stories, Version=0.0.13.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Objectivity.Bot.Tests.Stories.0.0.6\lib\net461\Objectivity.Bot.Tests.Stories.dll</HintPath>
+    <Reference Include="Objectivity.Bot.Tests.Stories, Version=0.0.14.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Objectivity.Bot.Tests.Stories.0.0.14\lib\net47\Objectivity.Bot.Tests.Stories.dll</HintPath>
     </Reference>
     <Reference Include="Objectivity.Bot.Tests.Stories.Xunit, Version=0.0.17.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Objectivity.Bot.Tests.Stories.Xunit.0.0.9\lib\net47\Objectivity.Bot.Tests.Stories.Xunit.dll</HintPath>
@@ -175,6 +175,8 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
     <Analyzer Include="..\packages\xunit.analyzers.0.8.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

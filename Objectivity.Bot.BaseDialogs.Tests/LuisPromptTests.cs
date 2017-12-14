@@ -7,7 +7,6 @@
 
     public class LuisPromptTests : LuisDialogUnitTestBase<LuisPromptTestingDialog>
     {
-
         [Theory]
         [InlineData("Yes")]
         public async Task LuisDialog_PositiveResponse_YesReturned(string input)
@@ -90,6 +89,5 @@
                 .Rewind();
             await this.Play(story);
         }
-
     }
 }
