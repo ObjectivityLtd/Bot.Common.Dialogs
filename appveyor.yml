@@ -27,11 +27,14 @@ build:
 test:
   assemblies:
     - '**\*.Tests.dll'
-assembly_info:
+dotnet_csproj:
   patch: true
-  file: \Objectivity.Bot.BaseDialogs\Properties\AssemblyInfo.cs
-  assembly_version: "{version}"
-  assembly_file_version: "{version}"
+  file: '**\*.csproj'
+  version: '{version}'
+  package_version: '{version}'
+  assembly_version: '{version}'
+  file_version: '{version}'
+  informational_version: '{version}'
 environment:
   NugetApiKey:
     secure: DIE2y66RzXWvp2Q0wIOLlBTjxILBGeHyyg3pjwWjdVrggzuj9BuMWCdfHFmt9nt2
