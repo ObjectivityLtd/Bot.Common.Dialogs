@@ -24,6 +24,7 @@ before_build:
 build:
   verbosity: detailed
   publish_nuget: true
+  publish_nuget_symbols: true
 test:
   assemblies:
     - '**\*.Tests.dll'
@@ -44,3 +45,4 @@ deploy:
     artifact: /.*\.nupkg/
     on:
       appveyor_repo_tag: true
+    skip_symbols: false

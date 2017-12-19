@@ -15,10 +15,10 @@
             <dependency id="Newtonsoft.Json" version="10.0.3" />
             <dependency id="Microsoft.Bot.Builder" version="3.11.0" />
             <dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.3" />
-			<dependency id="Objectivity.Bot.HtmlBuilder" version="1.0.0" />
+            <dependency id="Objectivity.Bot.HtmlBuilder" version="1.0.0" />
         </dependencies>
     </metadata>
     <files>
-        <file src="bin\Release\Objectivity.Bot.BaseDialogs.dll" target="lib\Objectivity.Bot.BaseDialogs.dll" />
+        <file src="bin\Release\net47\Objectivity.Bot.BaseDialogs.dll" target="lib\Objectivity.Bot.BaseDialogs.dll" />
     </files>
 </package>
