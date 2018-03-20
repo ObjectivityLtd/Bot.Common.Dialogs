@@ -1,16 +1,19 @@
 ﻿namespace Objectivity.Bot.BaseDialogs.Dialogs
 {
     using System;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using LuisApp;
     using Microsoft.Bot.Builder.Dialogs;
+    using Microsoft.Bot.Builder.Dialogs.Internals;
     using Microsoft.Bot.Builder.Luis;
     using Microsoft.Bot.Builder.Luis.Models;
     using Microsoft.Bot.Connector;
     using NLog;
+    using Services;
     using Utils;
 
     /// <summary>
@@ -21,7 +24,7 @@
     {
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
-        private readonly ILuisService luisService;
+        private readonly ILuisService[] luisServices;
         private readonly string prompt;
         private readonly string[] luisIntents;
         private readonly string retry;
@@ -40,16 +43,16 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="LuisPrompt"/> class.
         /// </summary>
-        /// <param name="luisService">LUIS service interpreting responses other than yes/no</param>
+        /// <param name="luisServices">LUIS services interpreting responses other than yes/no</param>
         /// <param name="prompt">The prompt.</param>
         /// <param name="attempts">Maximum number of attempts.</param>
         /// <param name="retry">What to show on retry.</param>
         /// <param name="luisIntents"></param>
         /// <param name="patterns">Yes and no alternatives for matching input where first dimension is either <see cref="PromptDialog.PromptConfirm.Yes"/> or <see cref="PromptDialog.PromptConfirm.No"/> and the arrays are alternative strings to match.</param>
         /// <param name="tooManyAttempts">What to display when user didn't say a valid response after <see cref="attempts"/>.</param>
-        private LuisPrompt(ILuisService luisService, string prompt, int attempts, string retry = null, string[] luisIntents = null, string[][] patterns = null, string tooManyAttempts = null)
+        private LuisPrompt(ILuisService[] luisServices, string prompt, int attempts, string retry = null, string[] luisIntents = null, string[][] patterns = null, string tooManyAttempts = null)
         {
-            this.luisService = luisService;
+            this.luisServices = luisServices;
             this.prompt = prompt;
             this.attempts = attempts;
             this.retry = retry ?? new PromptDialog.PromptConfirm(this.prompt, this.retry, this.attempts).DefaultRetry; //just to steal retry message;
@@ -86,7 +89,39 @@
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var child = new LuisPrompt(luisService, prompt, attempts, retry, luisIntents, patterns, tooManyAttempts);
+            var child = new LuisPrompt(new[] { luisService }, prompt, attempts, retry, luisIntents, patterns, tooManyAttempts);
+            context.Call(child, resume);
+        }
+
+        /// <summary>
+        /// Ask a yes/no question and allow additional responses
+        /// </summary>
+        /// <param name="luisService">LUIS service interpreting responses other than yes/no</param>
+        /// <param name="context">Dialog context</param>
+        /// <param name="resume">Resume handler.</param>
+        /// <param name="prompt">The prompt to show to the user.</param>
+        /// <param name="attempts">The number of times to retry.</param>
+        /// <param name="retry">What to display on retry.</param>
+        /// <param name="luisIntents"></param>
+        /// <param name="patterns">Yes and no alternatives for matching input where first dimension is either <see cref="PromptDialog.PromptConfirm.Yes"/> or <see cref="PromptDialog.PromptConfirm.No"/> and the arrays are alternative strings to match.</param>
+        /// <param name="tooManyAttempts">What to display when user didn't say a valid response after <see cref="attempts"/>.</param>
+        public static void Confirm(
+            ILuisService[] luisServices,
+            IDialogContext context,
+            ResumeAfter<LuisPromptResult> resume,
+            string prompt,
+            int attempts = 3,
+            string retry = null,
+            string[] luisIntents = null,
+            string[][] patterns = null,
+            string tooManyAttempts = null)
+        {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            var child = new LuisPrompt(luisServices, prompt, attempts, retry, luisIntents, patterns, tooManyAttempts);
             context.Call(child, resume);
         }
 
@@ -102,19 +137,11 @@
             context.Wait(this.GotResponse);
         }
 
-        private async Task<LuisResult> QueryLuis(string input, CancellationToken cancellationToken)
-        {
-            Logger.Trace(CultureInfo.InvariantCulture, "Querying LUIS for {0}", input);
-            var request = this.luisService.ModifyRequest(new LuisRequest(input));
-            var result = await this.luisService.QueryAsync(request, cancellationToken);
-            return result;
-        }
-
         private async Task GotResponse(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {
             var response = await argument;
 
-            var luisresult = await this.QueryLuis(response.Text, context.CancellationToken);
+            var luisresult = await LuisQueryHelper.GetResultWithStrongestTopScoringIntent(this.luisServices.ToLuisServiceWrappers(), response.Text, context.CancellationToken);
             var isUnkownReponse =
                 string.IsNullOrEmpty(luisresult.TopScoringIntent.Intent) ||
                 luisresult.TopScoringIntent.Intent == Intents.None ||
