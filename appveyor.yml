@@ -38,7 +38,7 @@ dotnet_csproj:
   informational_version: '{version}'
 environment:
   NugetApiKey:
-    secure: DIE2y66RzXWvp2Q0wIOLlBTjxILBGeHyyg3pjwWjdVrggzuj9BuMWCdfHFmt9nt2
+    secure: CJe5cIJ4PP7lg/9uPQJxUY/Z25WN5fmvtE0bYVCnTo9MFyJwBQtKkVNLLwz0mT3t
 deploy:
   - provider: NuGet
     api_key: $(NugetApiKey)
