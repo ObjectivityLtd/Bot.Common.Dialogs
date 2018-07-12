@@ -2,13 +2,10 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using LuisApp;
     using Microsoft.Bot.Builder.Dialogs;
-    using Microsoft.Bot.Builder.Dialogs.Internals;
     using Microsoft.Bot.Builder.Luis;
     using Microsoft.Bot.Builder.Luis.Models;
     using Microsoft.Bot.Connector;
@@ -29,6 +26,7 @@
         private readonly string[] luisIntents;
         private readonly string retry;
         private readonly BooleanRecognizer recognizer;
+        private readonly bool isLuisUsedFirst;
 
         /// <summary>
         /// What to display when user didn't say a valid response after <see cref="attempts"/>.
@@ -47,10 +45,11 @@
         /// <param name="prompt">The prompt.</param>
         /// <param name="attempts">Maximum number of attempts.</param>
         /// <param name="retry">What to show on retry.</param>
-        /// <param name="luisIntents"></param>
+        /// <param name="luisIntents">Intents for luis to limit query</param>
         /// <param name="patterns">Yes and no alternatives for matching input where first dimension is either <see cref="PromptDialog.PromptConfirm.Yes"/> or <see cref="PromptDialog.PromptConfirm.No"/> and the arrays are alternative strings to match.</param>
         /// <param name="tooManyAttempts">What to display when user didn't say a valid response after <see cref="attempts"/>.</param>
-        private LuisPrompt(ILuisService[] luisServices, string prompt, int attempts, string retry = null, string[] luisIntents = null, string[][] patterns = null, string tooManyAttempts = null)
+        /// <param name="isLuisUsedFirst">Whether Luis or regular prompt should be checked first.</param>
+        private LuisPrompt(ILuisService[] luisServices, string prompt, int attempts, string retry = null, string[] luisIntents = null, string[][] patterns = null, string tooManyAttempts = null, bool isLuisUsedFirst = true)
         {
             this.luisServices = luisServices;
             this.prompt = prompt;
@@ -59,6 +58,7 @@
             this.luisIntents = luisIntents;
             this.recognizer = new BooleanRecognizer(patterns);
             this.tooManyAttempts = tooManyAttempts ?? Microsoft.Bot.Builder.Resource.Resources.TooManyAttempts;
+            this.isLuisUsedFirst = isLuisUsedFirst;
         }
 
         /// <summary>
@@ -70,9 +70,10 @@
         /// <param name="prompt">The prompt to show to the user.</param>
         /// <param name="attempts">The number of times to retry.</param>
         /// <param name="retry">What to display on retry.</param>
-        /// <param name="luisIntents"></param>
+        /// <param name="luisIntents">Intents for luis to limit query</param>
         /// <param name="patterns">Yes and no alternatives for matching input where first dimension is either <see cref="PromptDialog.PromptConfirm.Yes"/> or <see cref="PromptDialog.PromptConfirm.No"/> and the arrays are alternative strings to match.</param>
         /// <param name="tooManyAttempts">What to display when user didn't say a valid response after <see cref="attempts"/>.</param>
+        /// <param name="isLuisUsedFirst">Whether Luis or regular prompt should be checked first.</param>
         public static void Confirm(
             ILuisService luisService,
             IDialogContext context,
@@ -82,29 +83,31 @@
             string retry = null,
             string[] luisIntents = null,
             string[][] patterns = null,
-            string tooManyAttempts = null)
+            string tooManyAttempts = null,
+            bool isLuisUsedFirst = true)
         {
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var child = new LuisPrompt(new[] { luisService }, prompt, attempts, retry, luisIntents, patterns, tooManyAttempts);
+            var child = new LuisPrompt(new[] { luisService }, prompt, attempts, retry, luisIntents, patterns, tooManyAttempts, isLuisUsedFirst);
             context.Call(child, resume);
         }
 
         /// <summary>
         /// Ask a yes/no question and allow additional responses
         /// </summary>
-        /// <param name="luisService">LUIS service interpreting responses other than yes/no</param>
+        /// <param name="luisServices">LUIS service interpreting responses other than yes/no</param>
         /// <param name="context">Dialog context</param>
         /// <param name="resume">Resume handler.</param>
         /// <param name="prompt">The prompt to show to the user.</param>
         /// <param name="attempts">The number of times to retry.</param>
         /// <param name="retry">What to display on retry.</param>
-        /// <param name="luisIntents"></param>
+        /// <param name="luisIntents">Intents for luis to limit query</param>
         /// <param name="patterns">Yes and no alternatives for matching input where first dimension is either <see cref="PromptDialog.PromptConfirm.Yes"/> or <see cref="PromptDialog.PromptConfirm.No"/> and the arrays are alternative strings to match.</param>
         /// <param name="tooManyAttempts">What to display when user didn't say a valid response after <see cref="attempts"/>.</param>
+        /// <param name="isLuisUsedFirst">Whether Luis or regular prompt should be checked first.</param>
         public static void Confirm(
             ILuisService[] luisServices,
             IDialogContext context,
@@ -114,14 +117,15 @@
             string retry = null,
             string[] luisIntents = null,
             string[][] patterns = null,
-            string tooManyAttempts = null)
+            string tooManyAttempts = null,
+            bool isLuisUsedFirst = true)
         {
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var child = new LuisPrompt(luisServices, prompt, attempts, retry, luisIntents, patterns, tooManyAttempts);
+            var child = new LuisPrompt(luisServices, prompt, attempts, retry, luisIntents, patterns, tooManyAttempts, isLuisUsedFirst);
             context.Call(child, resume);
         }
 
@@ -140,19 +144,13 @@
         private async Task GotResponse(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {
             var response = await argument;
-
-            var luisresult = await LuisQueryHelper.GetResultWithStrongestTopScoringIntent(this.luisServices.ToLuisServiceWrappers(), response.Text, context.CancellationToken);
-            var isUnkownReponse =
-                string.IsNullOrEmpty(luisresult.TopScoringIntent.Intent) ||
-                luisresult.TopScoringIntent.Intent == Intents.None ||
-                !this.luisIntents?.Contains(luisresult.TopScoringIntent.Intent) == true;
-            if (isUnkownReponse)
+            if (this.isLuisUsedFirst)
             {
-                await this.UseRegularPrompt(context, response);
+                await this.UseLuis(context, response);
             }
             else
             {
-                context.Done(new LuisPromptResult { ResultType = LuisPromptResultType.LuisResult, LuisResult = luisresult });
+                await this.UseRegularPrompt(context, response);
             }
         }
 
@@ -164,9 +162,46 @@
             {
                 context.Done(new LuisPromptResult { ResultType = entity.Value ? LuisPromptResultType.Yes : LuisPromptResultType.No });
             }
-            else
+            else if (this.isLuisUsedFirst)
             {
                 await this.HandleRetry(context);
+            }
+            else
+            {
+                await this.UseLuis(context, response);
+            }
+        }
+
+        private async Task UseLuis(IDialogContext context, IMessageActivity response)
+        {
+            var luisresult = await LuisQueryHelper.GetResultWithStrongestTopScoringIntent(this.luisServices.ToLuisServiceWrappers(), response.Text, context.CancellationToken);
+
+            LuisPromptResult luisPromptResult = new LuisPromptResult() { ResultType = LuisPromptResultType.LuisResult };
+
+            var isUnkownReponse =
+                string.IsNullOrEmpty(luisresult.TopScoringIntent.Intent) ||
+                luisresult.TopScoringIntent.Intent == Intents.None ||
+                !this.luisIntents?.Contains(luisresult.TopScoringIntent.Intent) == true;
+
+            if (!isUnkownReponse)
+            {
+                luisPromptResult.LuisResult = luisresult;
+                context.Done(luisPromptResult);
+                return;
+            }
+
+            if (!this.isLuisUsedFirst)
+            {
+                var noneEntityRecommendation = new EntityRecommendation(Intents.None);
+                luisPromptResult.LuisResult = new LuisResult(
+                    luisresult.Query,
+                    new List<EntityRecommendation> { noneEntityRecommendation },
+                    new IntentRecommendation(Intents.None, 1));
+                context.Done(luisPromptResult);
+            }
+            else
+            {
+                await this.UseRegularPrompt(context, response);
             }
         }
 
