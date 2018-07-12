@@ -20,7 +20,6 @@ Feature                                                                |Class|De
 Dialog Factory| DialogFactory.cs| Class helps with dialog creation thorugh Autofac together with dependencies             | 
 Date dialog| DateDialog.cs    | Ready to use dialog which asks user for a date and use parser and LUIS to get proper value                    
 Skippable dialogs|SkippableChoiceDialog.cs  SkippablePromptConfirm.cs SkippableDateDialog.cs  | Skippable prompts which allow user to skip answer for bot's question
-LuisPrompt| LuisPrompt.cs   |A mixture of choice and confirm prompt. Capable of detecting not only Yes/No responses but also several others using LUIS service | 
 QnA Maker wrapper| QnAMaker.cs   |Wrapper around [QnaMaker](https://qnamaker.ai/) classes             | 
 Seting and retrieving values from bot state [(details)](#contextHelper) | ContextHelper.cs   |Helper class which allow to set given key value pair into bot state so it can be retrieved during conversation| 
 Handle picking right intents [(details)](#intentPicker)| BaseLuisDialog.cs, IntentsPicker   |Handle results from LUIS, if there are 2 simillar intents, user will be prompted which one should be used|
